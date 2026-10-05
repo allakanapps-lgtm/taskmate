@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>TaskMate - Allakan Apps</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1d4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="description" content="TaskMate by Allakan Apps - free Arabic/English admin assistant for invoices, clients, appointments and subscriptions. Works offline.">
+
+</head>
+<body>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout concept: one phone-width column, navy hero on Home, quiet white cards elsewhere, raised "+" in the bottom bar. */
+:root {
+  --bg: #F3F6FC;
+  --surface: #FFFFFF;
+  --surface2: #EBF0FA;
+  --ink: #0D1B3E;
+  --muted: #55627F;
+  --line: #D9E1F0;
+  --brand: #2150E0;
+  --brand-ink: #FFFFFF;
+  --brand-soft: #E1EAFF;
+  --good: #0F7A55;
+  --good-soft: #D9F3E8;
+  --warn: #9A5A06;
+  --warn-soft: #FFEFD0;
+  --bad: #B8322A;
+  --bad-soft: #FCE3E0;
+  --hero-a: #0A1A3F;
+  --hero-b: #16357A;
+  --hero-ink: #FFFFFF;
+  --hero-mute: #B7C5EA;
+  --scrim: rgba(8, 16, 38, .5);
+  --shadow: 0 8px 24px rgba(13, 27, 62, .10);
+  --font: 'IBM Plex Sans Arabic', system-ui, 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #080F22; --surface: #101A33; --surface2: #18264A; --ink: #E8EEFF; --muted: #9DABCF; --line: #24345E;
+    --brand: #6B96FF; --brand-ink: #07112B; --brand-soft: #1B2D60;
+    --good: #4BDC9D; --good-soft: #0E3A2C; --warn: #F2B258; --warn-soft: #43300F; --bad: #FF8A80; --bad-soft: #4A1D1A;
+    --hero-a: #0B1A42; --hero-b: #1B3C8C; --scrim: rgba(0, 0, 0, .62); --shadow: 0 8px 24px rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #080F22; --surface: #101A33; --surface2: #18264A; --ink: #E8EEFF; --muted: #9DABCF; --line: #24345E;
+  --brand: #6B96FF; --brand-ink: #07112B; --brand-soft: #1B2D60;
+  --good: #4BDC9D; --good-soft: #0E3A2C; --warn: #F2B258; --warn-soft: #43300F; --bad: #FF8A80; --bad-soft: #4A1D1A;
+  --hero-a: #0B1A42; --hero-b: #1B3C8C; --scrim: rgba(0, 0, 0, .62); --shadow: 0 8px 24px rgba(0, 0, 0, .4);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-tap-highlight-color: transparent; }
+body.lock { overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--brand); }
+bdi { unicode-bidi: isolate; }
+.ic { width: 22px; height: 22px; flex: none; }
+.ic.sm { width: 18px; height: 18px; }
+.ic.lg { width: 28px; height: 28px; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 8px; }
+
+#app { max-width: 520px; margin-inline: auto; padding-inline: 16px; padding-block: 12px 110px; min-height: 100vh; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 22px; line-height: 1.3; text-wrap: balance; }
+h2 { font-size: 17px; text-wrap: balance; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.num { font-variant-numeric: tabular-nums; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.stack-s { display: flex; flex-direction: column; gap: 8px; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.gap { display: flex; align-items: center; gap: 10px; }
+.grow { flex: 1; min-width: 0; }
+.trunc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sec { font-size: 14px; font-weight: 600; color: var(--muted); margin-top: 6px; }
+
+/* top bar */
+.top { display: flex; align-items: center; gap: 10px; padding-block: 8px 12px; min-height: 56px; }
+.top h1 { flex: 1; min-width: 0; font-size: 20px; }
+.iconbtn { width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; color: var(--ink); flex: none; }
+.iconbtn.plain { border-color: transparent; background: transparent; }
+
+/* surfaces */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+.card.flush { padding: 0; overflow: hidden; }
+.row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; width: 100%; background: none; border: 0; text-align: start; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+button.row:active { background: var(--surface2); }
+.avatar { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); flex: none; font-weight: 700; }
+.avatar.good { background: var(--good-soft); color: var(--good); }
+.avatar.warn { background: var(--warn-soft); color: var(--warn); }
+.avatar.bad { background: var(--bad-soft); color: var(--bad); }
+.avatar.mute { background: var(--surface2); color: var(--muted); }
+
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; background: var(--surface2); color: var(--muted); white-space: nowrap; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.info { background: var(--brand-soft); color: var(--brand); }
+
+/* buttons */
+.btn { min-height: 48px; padding: 10px 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; color: var(--ink); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.btn.danger { background: var(--bad-soft); border-color: transparent; color: var(--bad); }
+.btn.good { background: var(--good-soft); border-color: transparent; color: var(--good); }
+.btn.block { width: 100%; }
+.btn.sm { min-height: 40px; padding: 6px 14px; font-size: 14px; border-radius: 12px; }
+.btn[disabled] { opacity: .5; }
+.btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
+.btnrow > .btn { flex: 1 1 140px; }
+
+/* tabs */
+.seg { display: flex; gap: 4px; background: var(--surface2); border-radius: 14px; padding: 4px; }
+.seg button { flex: 1; min-height: 40px; border: 0; background: transparent; border-radius: 10px; font-weight: 600; color: var(--muted); padding-inline: 8px; }
+.seg button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-block: 2px; scrollbar-width: none; }
+.chip { flex: none; min-height: 38px; padding: 4px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); font-weight: 500; color: var(--muted); }
+.chip.on { background: var(--brand-soft); color: var(--brand); border-color: transparent; font-weight: 700; }
+
+/* forms */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label, .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+.in, select.in, textarea.in { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-size: 16px; }
+textarea.in { min-height: 110px; resize: vertical; }
+.in::placeholder { color: var(--muted); opacity: .8; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.formerr { color: var(--bad); font-size: 13px; min-height: 0; }
+.formerr:empty { display: none; }
+.search { position: relative; }
+.search .ic { position: absolute; inset-inline-start: 14px; top: 13px; color: var(--muted); }
+.search .in { padding-inline-start: 44px; }
+
+/* hero */
+.hero { background: linear-gradient(160deg, var(--hero-a), var(--hero-b)); color: var(--hero-ink); border-radius: 24px; padding: 20px 18px 18px; }
+.hero h1 { color: var(--hero-ink); }
+.hero .sub { color: var(--hero-mute); }
+.ask { display: flex; gap: 8px; margin-top: 16px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .22); border-radius: 16px; padding: 6px; }
+.ask input { flex: 1; min-width: 0; background: transparent; border: 0; color: #fff; padding: 8px 10px; font-size: 16px; }
+.ask input::placeholder { color: var(--hero-mute); }
+.ask input:focus-visible { outline: none; }
+.ask:focus-within { border-color: #fff; }
+.ask button { width: 46px; border: 0; border-radius: 12px; background: #fff; color: #0A1A3F; display: grid; place-items: center; flex: none; }
+.tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(255, 255, 255, .16); color: var(--hero-ink); }
+
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; text-align: start; display: flex; flex-direction: column; gap: 10px; min-height: 108px; }
+.tile:active { background: var(--surface2); }
+.tile b { font-size: 16px; }
+
+.banner { display: flex; gap: 10px; align-items: flex-start; background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 12px 14px; font-size: 14px; }
+.banner.info { background: var(--brand-soft); color: var(--brand); }
+.banner .btn { margin-top: 6px; }
+
+/* bottom nav */
+.nav { position: fixed; inset-inline: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.nav-in { max-width: 520px; margin-inline: auto; display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; padding-inline: 8px; }
+.nav button { background: none; border: 0; min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--muted); font-size: 12px; font-weight: 500; position: relative; }
+.nav button.on { color: var(--brand); font-weight: 700; }
+.nav .plus { width: 56px; height: 56px; min-height: 56px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); margin: -18px auto 4px; box-shadow: var(--shadow); }
+.dot { position: absolute; top: 8px; inset-inline-start: calc(50% + 6px); min-width: 18px; height: 18px; padding-inline: 5px; border-radius: 99px; background: var(--bad); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+
+/* sheet + toast */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; }
+.sheet { position: fixed; inset-inline: 0; bottom: 0; z-index: 41; max-width: 520px; margin-inline: auto; background: var(--surface); border-radius: 24px 24px 0 0; max-height: 90vh; overflow-y: auto; padding: 18px 16px calc(20px + env(safe-area-inset-bottom, 0px)); box-shadow: var(--shadow); animation: up .22s ease-out; }
+.sheet h2 { margin-bottom: 14px; }
+.grab { width: 44px; height: 5px; border-radius: 9px; background: var(--line); margin: -6px auto 14px; }
+#toast { position: fixed; inset-inline: 16px; bottom: 96px; z-index: 60; max-width: 420px; margin-inline: auto; background: var(--ink); color: var(--bg); padding: 12px 16px; border-radius: 14px; text-align: center; font-weight: 600; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+#toast.show { opacity: 1; transform: none; }
+@keyframes up { from { transform: translateY(24px); opacity: .4; } to { transform: none; opacity: 1; } }
+@keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* wizard */
+.opt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 54px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); border-radius: 14px; font-weight: 600; text-align: start; }
+.opt.on { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); }
+.opt .ic { color: var(--muted); }
+.opt.on .ic { color: var(--brand); }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.steps li { display: flex; gap: 12px; align-items: flex-start; opacity: 0; animation: appear .35s ease-out forwards; }
+.steps .tick { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--good-soft); color: var(--good); flex: none; margin-top: 1px; }
+.steps .tick.warn { background: var(--warn-soft); color: var(--warn); }
+.msg { white-space: pre-wrap; background: var(--surface2); border-radius: 14px; padding: 14px; font-size: 15px; line-height: 1.8; user-select: text; }
+.plan { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.plan li { display: flex; gap: 10px; align-items: flex-start; }
+.plan .ic { color: var(--good); margin-top: 3px; }
+
+/* calendar */
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.cal .h { font-size: 12px; color: var(--muted); padding-block: 4px; }
+.cal button { min-height: 44px; border: 0; border-radius: 12px; background: transparent; font-weight: 500; position: relative; }
+.cal button.today { color: var(--brand); font-weight: 700; }
+.cal button.sel { background: var(--brand); color: var(--brand-ink); }
+.cal button.has::after { content: ""; position: absolute; bottom: 5px; inset-inline: 0; margin-inline: auto; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.cal button.off { visibility: hidden; }
+
+/* report */
+.kpis { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.kpi { background: var(--surface2); border-radius: 14px; padding: 10px; }
+.kpi b { display: block; font-size: 15px; word-break: break-word; }
+.bars svg { width: 100%; height: auto; display: block; }
+.bar { height: 8px; border-radius: 99px; background: var(--surface2); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--brand); border-radius: 99px; }
+.legend { display: flex; gap: 14px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; }
+
+.empty { text-align: center; padding: 28px 16px; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.empty .ic { width: 36px; height: 36px; opacity: .6; }
+.welcome { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding-block: 24px; }
+.logo { width: 76px; height: 76px; border-radius: 22px; background: linear-gradient(150deg, var(--hero-b), var(--brand)); color: #fff; display: grid; place-items: center; }
+
+@media (max-width: 380px) { .kpis { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) {
+  .steps li { animation: none; opacity: 1; }
+  .sheet { animation: none; }
+  #toast { transition: none; }
+}
+
+/* ===== bilingual / direction ===== */
+.langbtn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 600; font-size: 13px; }
+.hero .langbtn { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; }
+.mirror { transform: scaleX(-1); }
+html[dir=ltr] .i-back, html[dir=ltr] .i-chev { transform: scaleX(-1); }
+html[dir=ltr] .nav .dot { inset-inline-start: calc(50% + 6px); }
+
+</style>
+<div id="root" dir="rtl" lang="ar"><div id="app"></div></div>
+<div id="sheet-root"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function () {
+'use strict';
+/* ================= utils ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+const pad = (n) => String(n).padStart(2, '0');
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const today = () => ymd(new Date());
+const parseD = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d, 12); };
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return ymd(d); };
+const diffDays = (a, b) => Math.round((parseD(a) - parseD(b)) / 864e5);
+const addMonths = (s, n) => {
+  const d = parseD(s); const day = d.getDate(); d.setDate(1); d.setMonth(d.getMonth() + n);
+  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); d.setDate(Math.min(day, last)); return ymd(d);
+};
+const tr = (ar, en) => (S.lang === 'en' ? en : ar);
+const MONTHS_AR = ['كانون الثاني', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'تشرين الأول', 'تشرين الثاني', 'كانون الأول'];
+const SHORT_AR = ['ك٢', 'شباط', 'آذار', 'نيسان', 'أيار', 'حزيران', 'تموز', 'آب', 'أيلول', 'ت١', 'ت٢', 'ك١'];
+const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const SHORT_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAYS_AR = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+const DAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const monthName = (i) => (S.lang === 'en' ? MONTHS_EN : MONTHS_AR)[i];
+const shortMonth = (i) => (S.lang === 'en' ? SHORT_EN : SHORT_AR)[i];
+const dayHeads = () => (S.lang === 'en' ? DAYS_EN : DAYS_AR).map((d) => d.slice(0, S.lang === 'en' ? 3 : 2));
+const weekLead = (firstDay) => (S.lang === 'en' ? firstDay : (firstDay + 1) % 7);
+const fmtDate = (s) => { if (!s) return ''; const d = parseD(s); return S.lang === 'en' ? `${SHORT_EN[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}` : `${d.getDate()} ${MONTHS_AR[d.getMonth()]} ${d.getFullYear()}`; };
+const relDay = (s) => {
+  const n = diffDays(s, today());
+  if (S.lang === 'en') {
+    if (n === 0) return 'today'; if (n === 1) return 'tomorrow'; if (n === -1) return 'yesterday';
+    if (n > 1 && n <= 10) return `in ${n} days`; if (n < -1 && n >= -10) return `${-n} days ago`;
+    return fmtDate(s);
+  }
+  if (n === 0) return 'اليوم'; if (n === 1) return 'غداً'; if (n === -1) return 'أمس';
+  if (n > 1 && n <= 10) return `بعد ${n} أيام`; if (n < -1 && n >= -10) return `قبل ${-n} أيام`;
+  return fmtDate(s);
+};
+const has = (hay, q) => String(hay || '').toLowerCase().includes(String(q || '').toLowerCase());
+const validDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s || '') && ymd(parseD(s)) === s;
+const CUR = { USD: { s: '$', pre: 1 }, EUR: { s: '€', pre: 1 }, TRY: { s: '₺', pre: 1 }, SYP: { s: 'ل.س' }, SAR: { s: 'ر.س' }, AED: { s: 'د.إ' } };
+const CURS = Object.keys(CUR);
+const numFmt = (a) => Number(a).toLocaleString('en-US', { maximumFractionDigits: 2 });
+const moneyText = (a, c) => { const k = CUR[c] || { s: c }; if (k.pre) return `${k.s}${numFmt(a)}`; return `${numFmt(a)} ${S.lang === 'en' ? c : k.s}`; };
+const money = (a, c) => `<bdi dir="ltr" class="num">${esc(moneyText(a, c))}</bdi>`;
+const sumBy = (list, get = (x) => x.amount) => { const m = {}; list.forEach((x) => { m[x.cur] = (m[x.cur] || 0) + get(x); }); return m; };
+const moneyMap = (m) => { const k = Object.keys(m).filter((c) => m[c]); return k.length ? k.map((c) => money(m[c], c)).join(' + ') : money(0, S.profile.cur); };
+const initial = (n) => (String(n || '?').trim()[0] || '?');
+
+/* ================= icons ================= */
+const ICONS = {
+  home: '<path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-6h6v6"/>',
+  tasks: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  invoice: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/>',
+  users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  repeat: '<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  folder: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  chart: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
+  back: '<path d="M5 12h14M12 5l7 7-7 7"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/>',
+  trash: '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  check: '<path d="M20 6L9 17l-5-5"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  alert: '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  mail: '<path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M22 6l-10 7L2 6"/>',
+  phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+  send: '<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',
+  x: '<path d="M18 6L6 18M6 6l12 12"/>',
+  bot: '<rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 14h.01M15 14h.01M2 14h2M20 14h2"/>',
+  more: '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',
+  chev: '<path d="M15 18l-6-6 6-6"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+};
+const ic = (n, cls = '') => `<svg class="ic i-${n} ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ''}</svg>`;
+
+/* ================= state + storage ================= */
+const KEY = 'taskmate.v1';
+let storageOk = true;
+const detectLang = () => { try { return String(navigator.language || 'ar').toLowerCase().startsWith('ar') ? 'ar' : 'en'; } catch (e) { return 'ar'; } };
+const blank = () => ({ v: 1, lang: detectLang(), onboarded: false, sample: false, theme: 'auto', profile: { name: '', business: '', cur: 'USD', cc: '963' }, seq: 1000, clients: [], invoices: [], subs: [], appts: [], docs: [], tasks: [] });
+let S = blank();
+try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); } catch (e) { storageOk = false; }
+function load() {
+  try { const r = localStorage.getItem(KEY); if (r) { const o = JSON.parse(r); if (o && o.v === 1) return Object.assign(blank(), o, { profile: Object.assign(blank().profile, o.profile || {}) }); } } catch (e) { /* ignore */ }
+  return null;
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); storageOk = true; } catch (e) { storageOk = false; } }
+S = load() || S;
+
+/* ================= domain helpers ================= */
+const CATS = ['برمجيات واشتراكات', 'تسويق', 'فواتير وخدمات', 'أخرى'];
+const DOC_CATS = ['عقد', 'ترخيص أو سجل', 'فاتورة أو إيصال', 'مستند شخصي', 'أخرى'];
+const CAT_EN = { 'برمجيات واشتراكات': 'Software & subscriptions', 'تسويق': 'Marketing', 'فواتير وخدمات': 'Bills & utilities', 'أخرى': 'Other', 'عقد': 'Contract', 'ترخيص أو سجل': 'License or registration', 'فاتورة أو إيصال': 'Invoice or receipt', 'مستند شخصي': 'Personal document' };
+const catL = (k) => (S.lang === 'en' ? (CAT_EN[k] || k) : k);
+const byId = (list, id) => list.find((x) => x.id === id);
+const cname = (id) => (byId(S.clients, id) || {}).name || '';
+const partyOf = (i) => (i.clientId && cname(i.clientId)) || i.party || tr('بدون اسم', 'No name');
+const invState = (i) => (i.status === 'paid' ? 'paid' : i.due < today() ? 'overdue' : 'due');
+const invPill = (i) => { const k = invState(i); return k === 'paid' ? ['good', tr('مدفوعة', 'Paid')] : k === 'overdue' ? ['bad', tr('متأخرة', 'Overdue')] : ['warn', tr('مستحقة', 'Due')]; };
+const monthlyCost = (s) => (s.cycle === 'year' ? s.price / 12 : s.price);
+function nextRenewal(s) {
+  let n = 0, d = s.next;
+  while (d < today() && n < 600) { n++; d = addMonths(s.next, n * (s.cycle === 'year' ? 12 : 1)); }
+  return d;
+}
+const apptsOn = (d) => S.appts.filter((a) => a.date === d).sort((a, b) => a.time.localeCompare(b.time));
+const unpaidIn = (clientId) => S.invoices.filter((i) => i.dir === 'in' && i.status !== 'paid' && i.clientId === clientId).sort((a, b) => a.due.localeCompare(b.due));
+
+function waNumber(phone) {
+  let d = String(phone || '').replace(/[^\d+]/g, '');
+  if (d.startsWith('+')) return d.slice(1);
+  if (d.startsWith('00')) return d.slice(2);
+  if (d.startsWith('0')) return (S.profile.cc || '963') + d.slice(1);
+  return d;
+}
+const waLink = (phone, text) => `https://wa.me/${waNumber(phone)}?text=${encodeURIComponent(text)}`;
+
+/* ================= notifications (computed from real data) ================= */
+function alerts() {
+  const out = []; const t = today();
+  S.invoices.filter((i) => i.status !== 'paid').forEach((i) => {
+    const n = diffDays(i.due, t);
+    const who = partyOf(i);
+    const sub = `#${i.number} · ${moneyText(i.amount, i.cur)}`;
+    if (n < 0) out.push({ sev: 3, icon: 'alert', tone: 'bad', title: i.dir === 'in' ? tr(`فاتورة ${who} متأخرة ${-n} يوم`, `${who}'s invoice is ${-n} day${-n === 1 ? '' : 's'} overdue`) : tr(`فاتورة ${who} فات موعد دفعها (${-n} يوم)`, `Your bill to ${who} is ${-n} day${-n === 1 ? '' : 's'} past due`), sub, go: ['invoices', { open: i.id }] });
+    else if (n <= 3) out.push({ sev: 2, icon: 'clock', tone: 'warn', title: i.dir === 'in' ? tr(`فاتورة ${who} تستحق ${relDay(i.due)}`, `${who}'s invoice is due ${relDay(i.due)}`) : tr(`ادفع فاتورة ${who} ${relDay(i.due)}`, `Pay ${who} ${relDay(i.due)}`), sub, go: ['invoices', { open: i.id }] });
+  });
+  S.appts.filter((a) => a.date === t || a.date === addDays(t, 1)).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time)).forEach((a) => {
+    out.push({ sev: a.date === t ? 3 : 1, icon: 'calendar', tone: 'info', title: `${a.title}`, sub: `${relDay(a.date)} · ${a.time}`, go: ['appts', { day: a.date }] });
+  });
+  S.subs.filter((s) => s.active).forEach((s) => {
+    const d = nextRenewal(s); const n = diffDays(d, t);
+    if (n <= 7) out.push({ sev: 1, icon: 'repeat', tone: 'warn', title: tr(`تجديد اشتراك ${s.name} ${relDay(d)}`, `${s.name} renews ${relDay(d)}`), sub: moneyText(s.price, s.cur), go: ['subs', {}] });
+  });
+  S.docs.filter((d) => d.expiry).forEach((d) => {
+    const n = diffDays(d.expiry, t);
+    if (n < 0) out.push({ sev: 3, icon: 'folder', tone: 'bad', title: tr(`انتهت صلاحية ${d.title}`, `${d.title} has expired`), sub: fmtDate(d.expiry), go: ['docs', {}] });
+    else if (n <= 30) out.push({ sev: 2, icon: 'folder', tone: 'warn', title: tr(`${d.title} تنتهي ${relDay(d.expiry)}`, `${d.title} expires ${relDay(d.expiry)}`), sub: fmtDate(d.expiry), go: ['docs', {}] });
+  });
+  S.invoices.filter((i) => i.status !== 'paid' && i.remindOn && i.remindOn <= t).forEach((i) => out.push({ sev: 3, icon: 'bell', tone: 'warn', title: tr(`تذكير: فاتورة ${partyOf(i)} #${i.number}`, `Reminder: invoice #${i.number} · ${partyOf(i)}`), sub: moneyText(i.amount, i.cur), go: ['invoices', { open: i.id }] }));
+  S.tasks.filter((k) => k.status === 'draft').forEach((k) => out.push({ sev: 2, icon: 'send', tone: 'info', title: tr('مسودة جاهزة بانتظار إرسالك', 'A draft is ready for you to send'), sub: k.text.slice(0, 60), go: ['taskDetail', { id: k.id }] }));
+  return out.sort((a, b) => b.sev - a.sev);
+}
+
+/* ================= sample data (clearly flagged) ================= */
+function loadSample() {
+  const t = today(); const c1 = uid(), c2 = uid(), c3 = uid();
+  S.clients = [
+    { id: c1, name: tr('أحمد العميل', 'Ahmad Client'), phone: '0933000111', email: 'ahmad@example.com', note: tr('يفضّل التواصل مساءً', 'Prefers to be contacted in the evening') },
+    { id: c2, name: tr('شركة النور للتجارة', 'Al-Nour Trading Co.'), phone: '0944000222', email: 'info@alnour.example', note: '' },
+    { id: c3, name: tr('سامر الخطيب', 'Samer Khatib'), phone: '', email: 'samer@example.com', note: '' },
+  ];
+  const inv = (number, dir, o) => Object.assign({ id: uid(), number, dir, clientId: '', party: '', title: '', amount: 0, cur: 'USD', due: t, status: 'unpaid', paidAt: '', category: '' }, o);
+  S.invoices = [
+    inv(1042, 'in', { clientId: c1, title: tr('تصميم هوية بصرية', 'Brand identity design'), amount: 1850, due: addDays(t, -14) }),
+    inv(1043, 'in', { clientId: c2, title: tr('صيانة موقع إلكتروني', 'Website maintenance'), amount: 420, due: addDays(t, 5) }),
+    inv(1041, 'in', { clientId: c3, title: tr('جلسة استشارة', 'Consulting session'), amount: 300, due: addDays(t, -30), status: 'paid', paidAt: addDays(t, -25) }),
+    inv(1040, 'in', { clientId: c1, title: tr('تصميم شعار', 'Logo design'), amount: 600, due: addDays(t, -45), status: 'paid', paidAt: addDays(t, -40) }),
+    inv(1044, 'in', { clientId: c2, title: tr('دفعة مقدّمة', 'Down payment'), amount: 500, due: addDays(t, -6), status: 'paid', paidAt: addDays(t, -3) }),
+    inv(2001, 'out', { party: tr('شركة الاتصالات', 'Telecom company'), title: tr('فاتورة الهاتف', 'Phone bill'), amount: 120, due: addDays(t, -3), category: 'فواتير وخدمات' }),
+    inv(2002, 'out', { party: tr('خدمات السحابة', 'Cloud Services'), title: tr('استضافة', 'Hosting'), amount: 49, due: addDays(t, 2), category: 'برمجيات واشتراكات' }),
+    inv(2003, 'out', { party: tr('الإنترنت', 'Internet provider'), title: tr('اشتراك الإنترنت', 'Internet plan'), amount: 80, due: addDays(t, -12), status: 'paid', paidAt: addDays(t, -10), category: 'فواتير وخدمات' }),
+    inv(2004, 'out', { party: tr('الكهرباء والماء', 'Electricity & water'), title: tr('فاتورة شهرية', 'Monthly bill'), amount: 65, due: addDays(t, -22), status: 'paid', paidAt: addDays(t, -20), category: 'فواتير وخدمات' }),
+  ];
+  S.seq = 2004;
+  const sub = (name, price, cycle, days, active, category) => ({ id: uid(), name, price, cur: 'USD', cycle, next: addDays(t, days), active, category });
+  S.subs = [sub('Adobe Creative Cloud', 52.99, 'month', 4, true, 'برمجيات واشتراكات'), sub('Microsoft 365', 9.99, 'month', 11, true, 'برمجيات واشتراكات'), sub('Spotify', 4.99, 'month', 20, true, 'أخرى'), sub(tr('استضافة الموقع', 'Website hosting'), 120, 'year', 60, true, 'برمجيات واشتراكات'), sub('Netflix', 15.99, 'month', 9, false, 'أخرى')];
+  S.appts = [
+    { id: uid(), title: tr('اجتماع مع العميل أحمد', 'Meeting with client Ahmad'), clientId: c1, date: t, time: '10:00', note: tr('مناقشة تعديلات الهوية', 'Discuss brand revisions') },
+    { id: uid(), title: tr('مكالمة مع المورّد', 'Call with the supplier'), clientId: '', date: t, time: '14:00', note: '' },
+    { id: uid(), title: tr('موعد تسليم المشروع', 'Project delivery'), clientId: c2, date: addDays(t, 6), time: '12:00', note: '' },
+  ];
+  S.docs = [
+    { id: uid(), title: tr('عقد إيجار المحل', 'Shop lease'), category: 'عقد', clientId: '', expiry: addDays(t, 20), note: tr('يُجدَّد سنوياً', 'Renewed yearly') },
+    { id: uid(), title: tr('السجل التجاري', 'Business registration'), category: 'ترخيص أو سجل', clientId: '', expiry: addDays(t, 200), note: '' },
+    { id: uid(), title: tr('عقد خدمات مع شركة النور', 'Services contract with Al-Nour'), category: 'عقد', clientId: c2, expiry: '', note: '' },
+  ];
+  S.tasks = [{ id: uid(), type: 'followup', text: tr('متابعة الفاتورة 1042 مع أحمد', 'Follow up invoice 1042 with Ahmad'), clientId: c1, invoiceId: '', status: 'done', createdAt: addDays(t, -2), result: { steps: [], message: '' } }];
+  S.sample = true;
+}
+
+/* ================= shell ================= */
+const app = $('#app'), sheetRoot = $('#sheet-root'), toastEl = $('#toast');
+let V = { name: 'home', p: {}, stack: [] };
+let W = null; // task wizard draft
+const MODULES = ['home', 'invoices', 'clients', 'clientDetail', 'appts', 'subs', 'docs', 'reports'];
+const NO_NAV = ['onboarding', 'taskNew', 'taskPlan', 'taskRun'];
+
+function go(name, p = {}) { V.stack.push({ name: V.name, p: V.p }); V = { name, p, stack: V.stack }; render(true); }
+function back() { const prev = V.stack.pop(); V = prev ? { name: prev.name, p: prev.p, stack: V.stack } : { name: 'home', p: {}, stack: [] }; render(true); }
+function tab(name) { V = { name, p: {}, stack: [] }; render(true); }
+function toast(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => toastEl.classList.remove('show'), 2400); }
+function applyTheme() { const r = document.documentElement; if (S.theme === 'auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', S.theme); }
+function applyLang() {
+  const lang = S.lang === 'en' ? 'en' : 'ar'; const dir = lang === 'en' ? 'ltr' : 'rtl';
+  const h = document.documentElement; h.lang = lang; h.dir = dir;
+  const r = document.getElementById('root'); if (r) { r.lang = lang; r.dir = dir; }
+  try { document.title = lang === 'en' ? 'TaskMate' : 'TaskMate'; } catch (e) { /* ignore */ }
+}
+function commit(msg) { save(); if (msg) toast(msg); render(false); }
+
+function sheet(html) { sheetRoot.innerHTML = `<div class="scrim" data-act="closeSheet"></div><div class="sheet" role="dialog" aria-modal="true">${html}</div>`; document.body.classList.add('lock'); const f = sheetRoot.querySelector('input:not([type=hidden]),textarea,select'); if (f && matchMedia('(pointer:fine)').matches) f.focus(); }
+function closeSheet() { sheetRoot.innerHTML = ''; document.body.classList.remove('lock'); }
+function confirmSheet(msg, act, id) {
+  sheet(`<div class="grab"></div><h2>${esc(msg)}</h2><div class="btnrow"><button class="btn danger" data-act="${act}" data-id="${esc(id || '')}">${tr('نعم، احذف', 'Yes, delete')}</button><button class="btn" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div>`);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); toast(tr('تم النسخ', 'Copied')); return; } catch (e) { /* fall through */ }
+  try {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0'; document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy'); ta.remove(); toast(ok ? tr('تم النسخ', 'Copied') : tr('حدّد النص وانسخه يدوياً', 'Select the text and copy it manually'));
+  } catch (e) { toast(tr('حدّد النص وانسخه يدوياً', 'Select the text and copy it manually')); }
+}
+
+/* ================= small components ================= */
+const top = (title, o = {}) => `<div class="top">${o.back === false ? '' : `<button class="iconbtn" data-act="back" aria-label="${tr('رجوع', 'Back')}">${ic('back')}</button>`}<h1>${esc(title)}</h1>${o.right || ''}</div>`;
+const addBtn = (act, label, data = '') => `<button class="iconbtn" data-act="${act}" ${data} aria-label="${esc(label)}">${ic('plus')}</button>`;
+const pill = (tone, text) => `<span class="pill ${tone}">${esc(text)}</span>`;
+const empty = (icon, title, sub, btn = '') => `<div class="empty">${ic(icon)}<b>${esc(title)}</b><span class="small">${esc(sub)}</span>${btn}</div>`;
+const field = (id, label, control) => `<div class="field"><label for="${id}">${esc(label)}</label>${control}</div>`;
+const input = (id, v = '', extra = '') => `<input class="in" id="${id}" value="${esc(v)}" ${extra}>`;
+const options = (list, sel, val = (x) => x, lab = (x) => x) => list.map((x) => `<option value="${esc(val(x))}" ${val(x) === sel ? 'selected' : ''}>${esc(lab(x))}</option>`).join('');
+const clientOptions = (sel, none) => `<option value="">${esc(none || tr('بدون عميل', 'No client'))}</option>` + options(S.clients, sel, (c) => c.id, (c) => c.name);
+const val = (id) => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+const toNum = (s) => Number(String(s).replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫', '.').replace(',', '.'));
+const searchBox = (key, v, ph) => `<div class="search">${ic('search', 'sm')}<input class="in" data-input="${key}" value="${esc(v || '')}" placeholder="${esc(ph)}" aria-label="${esc(ph)}"></div>`;
+function formFail(form, id, msg) { const e = form.querySelector('.formerr'); if (e) e.textContent = msg; const f = document.getElementById(id); if (f) f.focus(); }
+const TT_KEYS = ['followup', 'email', 'appt', 'invoice', 'other'];
+const tt = (k) => ({
+  followup: { label: tr('متابعة عميل / مورّد', 'Follow up with a client / supplier'), icon: 'users' },
+  email: { label: tr('إرسال بريد إلكتروني', 'Send an email'), icon: 'mail' },
+  appt: { label: tr('حجز موعد', 'Book an appointment'), icon: 'calendar' },
+  invoice: { label: tr('دفع / جدولة فاتورة', 'Pay / schedule an invoice'), icon: 'invoice' },
+  other: { label: tr('أخرى', 'Other'), icon: 'tasks' },
+}[k] || { label: tr('أخرى', 'Other'), icon: 'tasks' });
+const langBtn = () => `<button class="langbtn" data-act="toggleLang" aria-label="Language / اللغة">${ic('globe', 'sm')}<span>${S.lang === 'en' ? 'العربية' : 'English'}</span></button>`;
+
+function navHtml() {
+  const n = alerts().filter((a) => a.sev >= 3).length;
+  const on = (names) => (names.includes(V.name) ? 'on' : '');
+  const it = (names, target, icon, label, badge) => `<button class="${on(names)}" data-act="tab" data-v="${target}" aria-label="${label}">${ic(icon)}<span>${label}</span>${badge ? `<span class="dot">${badge}</span>` : ''}</button>`;
+  return `<nav class="nav" aria-label="${tr('التنقل', 'Navigation')}"><div class="nav-in">${it(MODULES, 'home', 'home', tr('الرئيسية', 'Home'))}${it(['tasks', 'taskDetail'], 'tasks', 'tasks', tr('المهام', 'Tasks'))}<button class="plus" data-act="newTask" aria-label="${tr('مهمة جديدة', 'New task')}">${ic('plus', 'lg')}</button>${it(['alerts'], 'alerts', 'bell', tr('الإشعارات', 'Alerts'), n)}${it(['more'], 'more', 'grid', tr('المزيد', 'More'))}</div></nav>`;
+}
+
+/* ================= views ================= */
+function vOnboarding() {
+  return `<div class="welcome"><div class="between">${'<span></span>'}${langBtn()}</div><div class="logo">${ic('bot', 'lg')}</div>
+    <div class="stack-s"><h1>${tr('أهلاً بك في TaskMate', 'Welcome to TaskMate')}</h1><p class="muted">${tr('مساعدك الإداري الشخصي: فواتير وعملاء ومواعيد واشتراكات ومستندات في مكان واحد.', 'Your personal admin assistant: invoices, clients, appointments, subscriptions and documents in one place.')}</p></div>
+    <form class="stack" data-submit="obStart"><div class="field"><label for="ob-name">${tr('اسمك', 'Your name')}</label><input class="in" id="ob-name" placeholder="${tr('مثال: محمد', 'e.g. Sam')}" autocomplete="name"></div>
+    <button class="btn primary block" type="submit">${tr('ابدأ الآن', 'Get started')}</button>
+    <button class="btn block" type="button" data-act="obEmpty">${tr('ابدأ بدون بيانات تجريبية', 'Start without sample data')}</button></form>
+    <p class="small muted">${tr('بياناتك تُحفظ على هذا الجهاز فقط. لا يوجد حساب ولا خادم، والتطبيق يعمل بدون إنترنت.', 'Your data is saved on this device only. No account, no server, and it works offline.')}</p></div>`;
+}
+
+function vHome() {
+  const t = today(); const al = alerts().slice(0, 3);
+  const unpaid = S.invoices.filter((i) => i.status !== 'paid');
+  const active = S.subs.filter((s) => s.active);
+  const subTotal = {}; active.forEach((s) => { subTotal[s.cur] = (subTotal[s.cur] || 0) + monthlyCost(s); });
+  const owed = sumBy(unpaid.filter((i) => i.dir === 'in')); const owe = sumBy(unpaid.filter((i) => i.dir === 'out')); const late = unpaid.filter((i) => i.due < t).length;
+  const tile = (v, icon, tone, title, sub) => `<button class="tile" data-act="go" data-v="${v}"><span class="avatar ${tone}">${ic(icon)}</span><span><b>${title}</b><br><span class="small muted">${sub}</span></span></button>`;
+  const name = S.profile.name || tr('صديقي', 'there');
+  const n = unpaid.length;
+  return `<div class="stack">
+    <div class="hero"><div class="between"><span class="tag">${tr('مساعد بالقوالب · بدون AI', 'Template-based · no AI')}</span>${langBtn()}</div>
+      <h1 style="margin-top:12px">${tr(`مرحباً، ${esc(name)}`, `Hello, ${esc(name)}`)}</h1><p class="sub">${tr('كيف أساعدك اليوم؟', 'How can I help today?')}</p>
+      <form class="ask" data-submit="ask"><input id="ask-in" placeholder="${tr('اكتب طلبك... مثال: ذكّر أحمد بالفاتورة', 'Try: Remind Ahmad…')}" aria-label="${tr('اكتب طلبك', 'Type your request')}"><button type="submit" aria-label="${tr('تجهيز المهمة', 'Prepare the task')}">${ic('send')}</button></form>
+      <p class="small sub" style="margin-top:10px">${tr('يفهم طلبك بقواعد بسيطة ويجهّز لك مسودة تنفّذها بنفسك. لا يتصل بأي نموذج ذكاء اصطناعي.', 'It reads your request with simple rules and prepares a draft for you to send yourself. It does not connect to any AI model.')}</p></div>
+    ${S.sample ? `<div class="banner info">${ic('alert', 'sm')}<div>${tr('أنت ترى بيانات تجريبية للتعرّف على التطبيق.', 'You are looking at sample data to get to know the app.')}<br><button class="btn sm" data-act="clearAll">${tr('امسحها وابدأ ببياناتك', 'Clear it and start with your own')}</button></div></div>` : ''}
+    ${storageOk ? '' : `<div class="banner">${ic('alert', 'sm')}<div>${tr('تعذّر الحفظ على هذا المتصفح. ستضيع البيانات عند إغلاق الصفحة. جرّب فتح الملف في متصفح عادي.', 'This browser cannot save your data, so it will be lost when you close the page. Try opening the file in a regular browser.')}</div></div>`}
+    ${S.invoices.length ? `<div class="card"><div class="kpis"><div class="kpi"><span class="small muted">${tr('مستحق لك', 'Owed to you')}</span><b>${moneyMap(owed)}</b></div><div class="kpi"><span class="small muted">${tr('عليك دفعه', 'You owe')}</span><b>${moneyMap(owe)}</b></div><div class="kpi"><span class="small muted">${tr('متأخرة', 'Overdue')}</span><b style="color:${late ? 'var(--bad)' : 'inherit'}">${late}</b></div></div></div>` : ''}
+    ${al.length ? `<h2>${tr('يحتاج انتباهك', 'Needs your attention')}</h2><div class="card flush">${al.map(alertRow).join('')}</div>` : ''}
+    <div class="tiles">
+      ${tile('invoices', 'invoice', 'good', tr('الفواتير', 'Invoices'), tr(`${n} غير مدفوعة`, `${n} unpaid`))}
+      ${tile('clients', 'users', '', tr('العملاء', 'Clients'), tr(`${S.clients.length} عميل`, `${S.clients.length} client${S.clients.length === 1 ? '' : 's'}`))}
+      ${tile('appts', 'calendar', 'warn', tr('المواعيد', 'Appointments'), tr(`${apptsOn(t).length} اليوم`, `${apptsOn(t).length} today`))}
+      ${tile('subs', 'repeat', 'bad', tr('الاشتراكات', 'Subscriptions'), `${moneyMap(subTotal)} ${tr('/ شهر', '/ month')}`)}
+      ${tile('docs', 'folder', 'warn', tr('المستندات', 'Documents'), tr(`${S.docs.length} مستند`, `${S.docs.length} document${S.docs.length === 1 ? '' : 's'}`))}
+      ${tile('reports', 'chart', '', tr('التقارير', 'Reports'), tr('هذا الشهر', 'This month'))}
+    </div></div>`;
+}
+function alertRow(a, i) {
+  return `<button class="row" data-act="alertGo" data-i="${i}" data-v="${a.go[0]}" data-p="${esc(JSON.stringify(a.go[1]))}"><span class="avatar ${a.tone === 'info' ? '' : a.tone}">${ic(a.icon)}</span><span class="grow"><b style="display:block">${esc(a.title)}</b><span class="small muted trunc" style="display:block">${esc(a.sub)}</span></span>${ic('chev', 'sm')}</button>`;
+}
+
+function vAlerts() {
+  const al = alerts();
+  return `${top(tr('الإشعارات', 'Alerts'), { back: false })}${al.length ? `<div class="card flush">${al.map(alertRow).join('')}</div><p class="small muted" style="margin-top:12px">${tr('تُحسب الإشعارات من بياناتك عند فتح التطبيق. لا يرسل التطبيق إشعارات للهاتف وهو مغلق.', 'Alerts are calculated from your data when you open the app. The app cannot send phone notifications while it is closed.')}</p>` : empty('bell', tr('لا يوجد شيء عاجل', 'Nothing urgent'), tr('ستظهر هنا الفواتير المتأخرة والمواعيد والتجديدات القريبة.', 'Overdue invoices, upcoming appointments and renewals will show up here.'))}`;
+}
+
+function taskRow(k) {
+  const m = tt(k.type); const c = cname(k.clientId);
+  const st = k.status === 'draft' ? pill('info', tr('مسودة جاهزة', 'Draft ready')) : pill('good', tr('منفّذة', 'Done'));
+  return `<button class="row" data-act="openTask" data-id="${k.id}"><span class="avatar ${k.status === 'draft' ? '' : 'good'}">${ic(m.icon)}</span><span class="grow"><b class="trunc" style="display:block">${esc(k.text || m.label)}</b><span class="small muted">${esc(m.label)}${c ? ' · ' + esc(c) : ''} · ${relDay(k.createdAt)}</span></span>${st}</button>`;
+}
+function tasksList() {
+  const f = V.p.f || 'all';
+  const list = S.tasks.filter((k) => f === 'all' || (f === 'draft' ? k.status === 'draft' : k.status === 'done')).slice().reverse();
+  return list.length ? `<div class="card flush">${list.map(taskRow).join('')}</div>` : empty('tasks', tr('لا توجد مهام', 'No tasks yet'), tr('اضغط + لإنشاء مهمة، أو اكتب طلبك في الصفحة الرئيسية.', 'Tap + to create a task, or type a request on the home screen.'), `<button class="btn primary" data-act="newTask">${tr('مهمة جديدة', 'New task')}</button>`);
+}
+function vTasks() {
+  const f = V.p.f || 'all';
+  const sg = (k, l) => `<button class="${f === k ? 'on' : ''}" data-act="taskFilter" data-f="${k}">${l}</button>`;
+  return `${top(tr('المهام', 'Tasks'), { back: false })}<div class="stack"><div class="seg">${sg('all', tr('الكل', 'All'))}${sg('draft', tr('مسودات', 'Drafts'))}${sg('done', tr('منفّذة', 'Done'))}</div><div id="list">${tasksList()}</div></div>`;
+}
+
+/* ---- invoices ---- */
+function invRow(i) {
+  const st = invPill(i); const who = partyOf(i);
+  const status = i.status === 'paid' ? tr('دُفعت ', 'paid ') + relDay(i.paidAt || i.due) : tr('تستحق ', 'due ') + relDay(i.due);
+  return `<button class="row" data-act="invOpen" data-id="${i.id}"><span class="avatar ${st[0]}">${esc(initial(who))}</span><span class="grow"><b class="trunc" style="display:block">${esc(who)}</b><span class="small muted trunc" style="display:block">#${i.number} · ${i.dir === 'in' ? tr('لك', 'to you') : tr('عليك', 'you owe')} · ${status}</span></span><span style="text-align:end"><b>${money(i.amount, i.cur)}</b><br>${pill(st[0], st[1])}</span></button>`;
+}
+function invList() {
+  const { tab: tb = 'all', dir = 'all', q = '' } = V.p;
+  let l = S.invoices.slice().sort((a, b) => b.due.localeCompare(a.due));
+  if (tb === 'paid') l = l.filter((i) => i.status === 'paid'); if (tb === 'unpaid') l = l.filter((i) => i.status !== 'paid');
+  if (dir !== 'all') l = l.filter((i) => i.dir === dir);
+  if (q) l = l.filter((i) => has(partyOf(i) + i.title + i.number, q));
+  return l.length ? `<div class="card flush">${l.map(invRow).join('')}</div>` : empty('invoice', S.invoices.length ? tr('لا نتائج', 'No results') : tr('لا توجد فواتير بعد', 'No invoices yet'), S.invoices.length ? tr('غيّر الفلتر أو البحث.', 'Change the filter or search.') : tr('سجّل فواتيرك لتتابع المستحق لك وما عليك دفعه.', 'Record your invoices to track what you are owed and what you owe.'), S.invoices.length ? '' : `<button class="btn primary" data-act="invNew">${tr('فاتورة جديدة', 'New invoice')}</button>`);
+}
+function vInvoices() {
+  const { tab: tb = 'all', dir = 'all', q = '' } = V.p;
+  const owed = sumBy(S.invoices.filter((i) => i.dir === 'in' && i.status !== 'paid')); const due = sumBy(S.invoices.filter((i) => i.dir === 'out' && i.status !== 'paid'));
+  const late = S.invoices.filter((i) => i.status !== 'paid' && i.due < today()).length;
+  const sg = (k, l) => `<button class="${tb === k ? 'on' : ''}" data-act="invTab" data-k="${k}">${l}</button>`;
+  const ch = (k, l) => `<button class="chip ${dir === k ? 'on' : ''}" data-act="invDirF" data-k="${k}">${l}</button>`;
+  return `${top(tr('الفواتير', 'Invoices'), { right: addBtn('invNew', tr('فاتورة جديدة', 'New invoice')) })}<div class="stack">
+    <div class="card"><div class="two"><div><div class="small muted">${tr('مستحق لك', 'Owed to you')}</div><b>${moneyMap(owed)}</b></div><div><div class="small muted">${tr('عليك دفعه', 'You owe')}</div><b>${moneyMap(due)}</b></div></div>${late ? `<p class="small" style="margin-top:10px;color:var(--bad)">${tr(`${late} فاتورة متأخرة`, `${late} overdue invoice${late === 1 ? '' : 's'}`)}</p>` : ''}</div>
+    ${searchBox('q-inv', q, tr('ابحث برقم الفاتورة أو الاسم', 'Search by invoice number or name'))}
+    <div class="seg">${sg('paid', tr('المدفوعة', 'Paid'))}${sg('unpaid', tr('غير المدفوعة', 'Unpaid'))}${sg('all', tr('الكل', 'All'))}</div>
+    <div class="chips">${ch('all', tr('كل الاتجاهات', 'All directions'))}${ch('in', tr('لي (من العملاء)', 'Mine (from clients)'))}${ch('out', tr('علي (أدفعها)', 'I owe (to pay)'))}</div>
+    <div id="list">${invList()}</div></div>`;
+}
+function invoiceSheet(i) {
+  const st = invPill(i); const who = partyOf(i);
+  sheet(`<div class="grab"></div><div class="between"><h2>${tr('فاتورة', 'Invoice')} #${i.number}</h2>${pill(st[0], st[1])}</div>
+  <div class="stack-s" style="margin-bottom:14px"><div class="between"><span class="muted">${i.dir === 'in' ? tr('العميل', 'Client') : tr('الجهة', 'Payee')}</span><b>${esc(who)}</b></div>
+  <div class="between"><span class="muted">${tr('المبلغ', 'Amount')}</span><b>${money(i.amount, i.cur)}</b></div>
+  <div class="between"><span class="muted">${tr('الاستحقاق', 'Due date')}</span><span>${fmtDate(i.due)}</span></div>
+  ${i.status === 'paid' ? `<div class="between"><span class="muted">${tr('تاريخ الدفع', 'Paid on')}</span><span>${fmtDate(i.paidAt)}</span></div>` : ''}
+  ${i.title ? `<div class="between"><span class="muted">${tr('البيان', 'Description')}</span><span>${esc(i.title)}</span></div>` : ''}
+  ${i.category ? `<div class="between"><span class="muted">${tr('الفئة', 'Category')}</span><span>${esc(catL(i.category))}</span></div>` : ''}
+  ${i.remindOn ? `<div class="between"><span class="muted">${tr('تذكير', 'Reminder')}</span><span>${fmtDate(i.remindOn)}</span></div>` : ''}</div>
+  <div class="stack-s">
+    <button class="btn ${i.status === 'paid' ? '' : 'good'} block" data-act="invToggle" data-id="${i.id}">${i.status === 'paid' ? tr('إلغاء تسجيل الدفع', 'Mark as unpaid') : tr('تسجيل كمدفوعة', 'Mark as paid')}</button>
+    ${i.dir === 'in' && i.status !== 'paid' && i.clientId ? `<button class="btn primary block" data-act="invFollow" data-id="${i.id}">${ic('send', 'sm')} ${tr('تجهيز رسالة متابعة', 'Prepare a follow-up message')}</button>` : ''}
+    <button class="btn block" data-act="invCopy" data-id="${i.id}">${ic('copy', 'sm')} ${tr('نسخ تفاصيل الفاتورة', 'Copy invoice details')}</button>
+    <div class="btnrow"><button class="btn" data-act="invEdit" data-id="${i.id}">${ic('edit', 'sm')} ${tr('تعديل', 'Edit')}</button><button class="btn danger" data-act="invDel" data-id="${i.id}">${ic('trash', 'sm')} ${tr('حذف', 'Delete')}</button></div></div>`);
+}
+function invoiceForm(i) {
+  const e = i || { dir: 'in', number: S.seq + 1, clientId: '', party: '', title: '', amount: '', cur: S.profile.cur, due: addDays(today(), 14), status: 'unpaid', category: 'فواتير وخدمات' };
+  sheet(`<div class="grab"></div><h2>${i ? tr('تعديل الفاتورة', 'Edit invoice') : tr('فاتورة جديدة', 'New invoice')}</h2>
+  <form id="f-inv" class="stack" data-submit="saveInvoice" data-id="${i ? i.id : ''}" novalidate>
+    <input type="hidden" id="i-dir" value="${e.dir}">
+    <div class="seg" role="group" aria-label="${tr('اتجاه الفاتورة', 'Invoice direction')}"><button type="button" data-act="invDirSet" data-d="in" class="${e.dir === 'in' ? 'on' : ''}">${tr('لي (من عميل)', 'Mine (from a client)')}</button><button type="button" data-act="invDirSet" data-d="out" class="${e.dir === 'out' ? 'on' : ''}">${tr('علي (أدفعها)', 'I owe (to pay)')}</button></div>
+    <div data-for="in" ${e.dir === 'in' ? '' : 'hidden'}>${field('i-client', tr('العميل', 'Client'), `<select class="in" id="i-client">${clientOptions(e.clientId, tr('اختر عميلاً (أو اكتب الاسم أدناه)', 'Pick a client (or type a name below)'))}</select>`)}</div>
+    ${field('i-party', tr('الجهة / الاسم', 'Payee / name'), input('i-party', e.party, `placeholder="${tr('مثال: شركة الاتصالات', 'e.g. Phone company')}"`))}
+    <div data-for="out" ${e.dir === 'out' ? '' : 'hidden'}>${field('i-cat', tr('الفئة', 'Category'), `<select class="in" id="i-cat">${options(CATS, e.category, (x) => x, catL)}</select>`)}</div>
+    ${field('i-title', tr('البيان (اختياري)', 'Description (optional)'), input('i-title', e.title))}
+    <div class="two">${field('i-amount', tr('المبلغ', 'Amount'), input('i-amount', e.amount, 'inputmode="decimal" placeholder="0"'))}${field('i-cur', tr('العملة', 'Currency'), `<select class="in" id="i-cur">${options(CURS, e.cur)}</select>`)}</div>
+    <div class="two">${field('i-num', tr('رقم الفاتورة', 'Invoice number'), input('i-num', e.number, 'inputmode="numeric"'))}${field('i-due', tr('تاريخ الاستحقاق', 'Due date'), input('i-due', e.due, 'type="date"'))}</div>
+    <label class="gap" style="min-height:44px"><input type="checkbox" id="i-paid" ${e.status === 'paid' ? 'checked' : ''} style="width:22px;height:22px"> <span>${tr('مدفوعة', 'Paid')}</span></label>
+    <p class="formerr" role="alert"></p>
+    <div class="btnrow"><button class="btn primary" type="submit">${tr('حفظ', 'Save')}</button><button class="btn" type="button" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div></form>`);
+}
+
+/* ---- clients ---- */
+function clientRow(c) {
+  const owed = sumBy(unpaidIn(c.id));
+  return `<button class="row" data-act="go" data-v="clientDetail" data-p="${esc(JSON.stringify({ id: c.id }))}"><span class="avatar">${esc(initial(c.name))}</span><span class="grow"><b class="trunc" style="display:block">${esc(c.name)}</b><span class="small muted trunc" style="display:block">${esc(c.phone || c.email || tr('بدون وسيلة تواصل', 'No contact details'))}</span></span>${Object.keys(owed).length ? `<span class="small" style="color:var(--warn)">${tr('مستحق', 'Owes')} ${moneyMap(owed)}</span>` : ''}</button>`;
+}
+function clientList() {
+  const q = V.p.q || ''; const l = S.clients.filter((c) => !q || has(c.name + c.phone + c.email, q)).sort((a, b) => a.name.localeCompare(b.name, S.lang));
+  return l.length ? `<div class="card flush">${l.map(clientRow).join('')}</div>` : empty('users', S.clients.length ? tr('لا نتائج', 'No results') : tr('لا يوجد عملاء بعد', 'No clients yet'), S.clients.length ? tr('جرّب كلمة أخرى.', 'Try another word.') : tr('أضف عملاءك لتربط بهم الفواتير والمواعيد.', 'Add your clients to link invoices and appointments to them.'), S.clients.length ? '' : `<button class="btn primary" data-act="clientNew">${tr('عميل جديد', 'New client')}</button>`);
+}
+function vClients() { return `${top(tr('العملاء', 'Clients'), { right: addBtn('clientNew', tr('عميل جديد', 'New client')) })}<div class="stack">${searchBox('q-cl', V.p.q, tr('ابحث بالاسم أو الرقم', 'Search by name or number'))}<div id="list">${clientList()}</div></div>`; }
+function vClientDetail() {
+  const c = byId(S.clients, V.p.id); if (!c) return `${top(tr('العميل', 'Client'))}${empty('users', tr('العميل غير موجود', 'Client not found'), tr('ربما حُذف.', 'It may have been deleted.'))}`;
+  const invs = S.invoices.filter((i) => i.clientId === c.id).sort((a, b) => b.due.localeCompare(a.due));
+  const ap = S.appts.filter((a) => a.clientId === c.id && a.date >= today()).sort((a, b) => a.date.localeCompare(b.date));
+  const owed = sumBy(unpaidIn(c.id));
+  return `${top(c.name, { right: `<button class="iconbtn" data-act="clientEdit" data-id="${c.id}" aria-label="${tr('تعديل', 'Edit')}">${ic('edit')}</button>` })}<div class="stack">
+    <div class="card stack-s">${c.phone ? `<div class="gap">${ic('phone', 'sm')}<bdi dir="ltr">${esc(c.phone)}</bdi></div>` : ''}${c.email ? `<div class="gap">${ic('mail', 'sm')}<bdi dir="ltr">${esc(c.email)}</bdi></div>` : ''}${c.note ? `<p class="muted">${esc(c.note)}</p>` : ''}${!c.phone && !c.email && !c.note ? `<p class="muted">${tr('لا توجد تفاصيل بعد.', 'No details yet.')}</p>` : ''}
+      <div class="between" style="margin-top:6px"><span class="muted">${tr('المستحق عليه', 'Outstanding')}</span><b>${moneyMap(owed)}</b></div></div>
+    <div class="btnrow"><button class="btn primary" data-act="followClient" data-id="${c.id}">${ic('send', 'sm')} ${tr('متابعة', 'Follow up')}</button>${c.phone ? `<a class="btn" href="${waLink(c.phone, '')}" target="_blank" rel="noopener">${tr('واتساب', 'WhatsApp')}</a>` : ''}</div>
+    <h2>${tr('الفواتير', 'Invoices')}</h2>${invs.length ? `<div class="card flush">${invs.map(invRow).join('')}</div>` : `<p class="muted">${tr('لا توجد فواتير لهذا العميل.', 'No invoices for this client.')}</p>`}
+    ${ap.length ? `<h2>${tr('المواعيد القادمة', 'Upcoming appointments')}</h2><div class="card flush">${ap.map(apptRow).join('')}</div>` : ''}
+    <button class="btn danger" data-act="clientDel" data-id="${c.id}">${ic('trash', 'sm')} ${tr('حذف العميل', 'Delete client')}</button></div>`;
+}
+function clientForm(c) {
+  const e = c || { name: '', phone: '', email: '', note: '' };
+  sheet(`<div class="grab"></div><h2>${c ? tr('تعديل العميل', 'Edit client') : tr('عميل جديد', 'New client')}</h2><form class="stack" data-submit="saveClient" data-id="${c ? c.id : ''}" novalidate>
+    ${field('c-name', tr('الاسم', 'Name'), input('c-name', e.name, 'autocomplete="off"'))}${field('c-phone', tr('الهاتف', 'Phone'), input('c-phone', e.phone, 'inputmode="tel" placeholder="09xxxxxxxx"'))}${field('c-email', tr('البريد الإلكتروني', 'Email'), input('c-email', e.email, 'inputmode="email" dir="ltr"'))}${field('c-note', tr('ملاحظة', 'Note'), `<textarea class="in" id="c-note" style="min-height:70px">${esc(e.note)}</textarea>`)}
+    <p class="formerr" role="alert"></p><div class="btnrow"><button class="btn primary" type="submit">${tr('حفظ', 'Save')}</button><button class="btn" type="button" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div></form>`);
+}
+
+/* ---- appointments ---- */
+function apptRow(a) {
+  const c = cname(a.clientId);
+  return `<button class="row" data-act="apptEdit" data-id="${a.id}"><span class="avatar warn">${ic('clock')}</span><span class="grow"><b style="display:block">${esc(a.title)}</b><span class="small muted">${fmtDate(a.date)}${c ? ' · ' + esc(c) : ''}</span></span><b class="num" dir="ltr">${esc(a.time)}</b></button>`;
+}
+function vAppts() {
+  const ym = V.p.ym || today().slice(0, 7); const day = V.p.day || today();
+  const [y, m] = ym.split('-').map(Number); const first = new Date(y, m - 1, 1); const lead = weekLead(first.getDay()); const days = new Date(y, m, 0).getDate();
+  let cells = dayHeads().map((d) => `<div class="h">${d}</div>`).join('') + '<span></span>'.repeat(lead);
+  for (let d = 1; d <= days; d++) {
+    const s = `${ym}-${pad(d)}`; const cls = [s === today() ? 'today' : '', s === day ? 'sel' : '', apptsOn(s).length ? 'has' : ''].join(' ');
+    cells += `<button class="${cls}" data-act="apptDay" data-d="${s}" aria-label="${d} ${monthName(m - 1)}">${d}</button>`;
+  }
+  const l = apptsOn(day);
+  return `${top(tr('المواعيد', 'Appointments'), { right: addBtn('apptNew', tr('موعد جديد', 'New appointment')) })}<div class="stack">
+    <div class="card"><div class="between" style="margin-bottom:8px"><button class="iconbtn plain" data-act="apptMonth" data-n="-1" aria-label="${tr('الشهر السابق', 'Previous month')}">${ic('back')}</button><b>${monthName(m - 1)} ${y}</b><button class="iconbtn plain mirror" data-act="apptMonth" data-n="1" aria-label="${tr('الشهر التالي', 'Next month')}">${ic('back')}</button></div><div class="cal">${cells}</div></div>
+    <h2>${relDay(day) === fmtDate(day) ? fmtDate(day) : relDay(day) + ' · ' + fmtDate(day)}</h2>
+    ${l.length ? `<div class="card flush">${l.map(apptRow).join('')}</div>` : empty('calendar', tr('لا توجد مواعيد في هذا اليوم', 'No appointments on this day'), tr('اضغط + لإضافة موعد.', 'Tap + to add one.'))}</div>`;
+}
+function apptForm(a, date) {
+  const e = a || { title: '', clientId: '', date: date || today(), time: '10:00', note: '' };
+  sheet(`<div class="grab"></div><h2>${a ? tr('تعديل الموعد', 'Edit appointment') : tr('موعد جديد', 'New appointment')}</h2><form class="stack" data-submit="saveAppt" data-id="${a ? a.id : ''}" novalidate>
+    ${field('a-title', tr('العنوان', 'Title'), input('a-title', e.title))}<div class="two">${field('a-date', tr('التاريخ', 'Date'), input('a-date', e.date, 'type="date"'))}${field('a-time', tr('الوقت', 'Time'), input('a-time', e.time, 'type="time"'))}</div>
+    ${field('a-client', tr('العميل (اختياري)', 'Client (optional)'), `<select class="in" id="a-client">${clientOptions(e.clientId)}</select>`)}${field('a-note', tr('ملاحظة', 'Note'), input('a-note', e.note))}
+    <p class="formerr" role="alert"></p><div class="btnrow"><button class="btn primary" type="submit">${tr('حفظ', 'Save')}</button>${a ? `<button class="btn danger" type="button" data-act="apptDel" data-id="${a.id}">${tr('حذف', 'Delete')}</button>` : ''}<button class="btn" type="button" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div></form>`);
+}
+
+/* ---- subscriptions ---- */
+function subRow(s) {
+  const nx = nextRenewal(s);
+  return `<button class="row" data-act="subEdit" data-id="${s.id}"><span class="avatar ${s.active ? '' : 'mute'}">${esc(initial(s.name))}</span><span class="grow"><b class="trunc" style="display:block">${esc(s.name)}</b><span class="small muted">${money(s.price, s.cur)} / ${s.cycle === 'year' ? tr('سنة', 'year') : tr('شهر', 'month')}${s.active ? tr(' · يتجدد ', ' · renews ') + relDay(nx) : ''}</span></span>${s.active ? pill('good', tr('نشط', 'Active')) : pill('', tr('منتهي', 'Ended'))}</button>`;
+}
+function subList() {
+  const f = V.p.f || 'all'; const l = S.subs.filter((s) => f === 'all' || (f === 'on' ? s.active : !s.active)).sort((a, b) => nextRenewal(a).localeCompare(nextRenewal(b)));
+  return l.length ? `<div class="card flush">${l.map(subRow).join('')}</div>` : empty('repeat', tr('لا توجد اشتراكات', 'No subscriptions'), tr('سجّل اشتراكاتك لتعرف كم تدفع شهرياً ومتى تتجدد.', 'Record your subscriptions to see what you pay monthly and when they renew.'), S.subs.length ? '' : `<button class="btn primary" data-act="subNew">${tr('اشتراك جديد', 'New subscription')}</button>`);
+}
+function vSubs() {
+  const f = V.p.f || 'all'; const act = S.subs.filter((s) => s.active);
+  const m = {}; act.forEach((s) => { m[s.cur] = (m[s.cur] || 0) + monthlyCost(s); }); const y = {}; Object.keys(m).forEach((c) => { y[c] = m[c] * 12; });
+  const sg = (k, l) => `<button class="${f === k ? 'on' : ''}" data-act="subFilter" data-f="${k}">${l}</button>`;
+  return `${top(tr('الاشتراكات', 'Subscriptions'), { right: addBtn('subNew', tr('اشتراك جديد', 'New subscription')) })}<div class="stack"><div class="card"><div class="small muted">${tr('إجمالي الاشتراكات النشطة شهرياً', 'Total active subscriptions per month')}</div><b style="font-size:22px">${moneyMap(m)}</b><div class="small muted" style="margin-top:4px">≈ ${moneyMap(y)} ${tr('في السنة', 'per year')}</div></div>
+    <div class="seg">${sg('all', tr('الكل', 'All'))}${sg('on', tr('نشطة', 'Active'))}${sg('off', tr('منتهية', 'Ended'))}</div><div id="list">${subList()}</div></div>`;
+}
+function subForm(s) {
+  const e = s || { name: '', price: '', cur: S.profile.cur, cycle: 'month', next: addDays(today(), 30), category: 'برمجيات واشتراكات', active: true };
+  sheet(`<div class="grab"></div><h2>${s ? tr('تعديل الاشتراك', 'Edit subscription') : tr('اشتراك جديد', 'New subscription')}</h2><form class="stack" data-submit="saveSub" data-id="${s ? s.id : ''}" novalidate>
+    ${field('s-name', tr('الاسم', 'Name'), input('s-name', e.name))}<div class="two">${field('s-price', tr('السعر', 'Price'), input('s-price', e.price, 'inputmode="decimal"'))}${field('s-cur', tr('العملة', 'Currency'), `<select class="in" id="s-cur">${options(CURS, e.cur)}</select>`)}</div>
+    <div class="two">${field('s-cycle', tr('الدورة', 'Billing cycle'), `<select class="in" id="s-cycle"><option value="month" ${e.cycle === 'month' ? 'selected' : ''}>${tr('شهرية', 'Monthly')}</option><option value="year" ${e.cycle === 'year' ? 'selected' : ''}>${tr('سنوية', 'Yearly')}</option></select>`)}${field('s-next', tr('التجديد القادم', 'Next renewal'), input('s-next', e.next, 'type="date"'))}</div>
+    ${field('s-cat', tr('الفئة', 'Category'), `<select class="in" id="s-cat">${options(CATS, e.category, (x) => x, catL)}</select>`)}
+    <label class="gap" style="min-height:44px"><input type="checkbox" id="s-active" ${e.active ? 'checked' : ''} style="width:22px;height:22px"> <span>${tr('نشط', 'Active')}</span></label>
+    <p class="formerr" role="alert"></p><div class="btnrow"><button class="btn primary" type="submit">${tr('حفظ', 'Save')}</button>${s ? `<button class="btn danger" type="button" data-act="subDel" data-id="${s.id}">${tr('حذف', 'Delete')}</button>` : ''}<button class="btn" type="button" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div></form>`);
+}
+
+/* ---- documents ---- */
+function docRow(d) {
+  const n = d.expiry ? diffDays(d.expiry, today()) : null; const c = cname(d.clientId);
+  const p = n === null ? '' : n < 0 ? pill('bad', tr('منتهي', 'Expired')) : n <= 30 ? pill('warn', tr('ينتهي ', 'Expires ') + relDay(d.expiry)) : pill('good', tr('ساري', 'Valid'));
+  return `<button class="row" data-act="docEdit" data-id="${d.id}"><span class="avatar warn">${ic('folder')}</span><span class="grow"><b class="trunc" style="display:block">${esc(d.title)}</b><span class="small muted">${esc(catL(d.category))}${c ? ' · ' + esc(c) : ''}${d.expiry ? tr(' · حتى ', ' · until ') + fmtDate(d.expiry) : ''}</span></span>${p}</button>`;
+}
+function docList() {
+  const f = V.p.f || 'all'; const l = S.docs.filter((d) => f === 'all' || d.category === f).sort((a, b) => (a.expiry || '9999').localeCompare(b.expiry || '9999'));
+  return l.length ? `<div class="card flush">${l.map(docRow).join('')}</div>` : empty('folder', tr('لا توجد مستندات', 'No documents'), tr('سجّل عقودك وتراخيصك مع تاريخ انتهائها لتصلك تنبيهات قبلها.', 'Record your contracts and licenses with their expiry dates to get alerts before they lapse.'), S.docs.length ? '' : `<button class="btn primary" data-act="docNew">${tr('مستند جديد', 'New document')}</button>`);
+}
+function vDocs() {
+  const f = V.p.f || 'all';
+  return `${top(tr('المستندات', 'Documents'), { right: addBtn('docNew', tr('مستند جديد', 'New document')) })}<div class="stack"><p class="small muted">${tr('يحفظ التطبيق بيانات المستند (الاسم والتاريخ والملاحظة) وليس ملف المستند نفسه. احتفظ بالملف الأصلي في مكان آمن.', 'The app stores the document details (name, date and note), not the file itself. Keep the original file somewhere safe.')}</p>
+    <div class="chips"><button class="chip ${f === 'all' ? 'on' : ''}" data-act="docFilter" data-f="all">${tr('الكل', 'All')}</button>${DOC_CATS.map((c) => `<button class="chip ${f === c ? 'on' : ''}" data-act="docFilter" data-f="${c}">${catL(c)}</button>`).join('')}</div><div id="list">${docList()}</div></div>`;
+}
+function docForm(d) {
+  const e = d || { title: '', category: 'عقد', clientId: '', expiry: '', note: '' };
+  sheet(`<div class="grab"></div><h2>${d ? tr('تعديل المستند', 'Edit document') : tr('مستند جديد', 'New document')}</h2><form class="stack" data-submit="saveDoc" data-id="${d ? d.id : ''}" novalidate>
+    ${field('d-title', tr('الاسم', 'Name'), input('d-title', e.title))}${field('d-cat', tr('النوع', 'Type'), `<select class="in" id="d-cat">${options(DOC_CATS, e.category, (x) => x, catL)}</select>`)}
+    ${field('d-client', tr('العميل (اختياري)', 'Client (optional)'), `<select class="in" id="d-client">${clientOptions(e.clientId)}</select>`)}${field('d-exp', tr('تاريخ الانتهاء (اختياري)', 'Expiry date (optional)'), input('d-exp', e.expiry, 'type="date"'))}${field('d-note', tr('ملاحظة', 'Note'), input('d-note', e.note))}
+    <p class="formerr" role="alert"></p><div class="btnrow"><button class="btn primary" type="submit">${tr('حفظ', 'Save')}</button>${d ? `<button class="btn danger" type="button" data-act="docDel" data-id="${d.id}">${tr('حذف', 'Delete')}</button>` : ''}<button class="btn" type="button" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div></form>`);
+}
+
+/* ---- reports ---- */
+const shiftYm = (ym, n) => { const [y, m] = ym.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; };
+function vReports() {
+  const ym = V.p.ym || today().slice(0, 7);
+  const curs = [...new Set([...S.invoices.map((i) => i.cur), ...S.subs.map((s) => s.cur), S.profile.cur])];
+  const cur = V.p.cur && curs.includes(V.p.cur) ? V.p.cur : (curs.includes(S.profile.cur) ? S.profile.cur : curs[0]);
+  const sumM = (dir, m) => S.invoices.filter((i) => i.dir === dir && i.cur === cur && i.status === 'paid' && (i.paidAt || '').slice(0, 7) === m).reduce((a, i) => a + i.amount, 0);
+  const months = [5, 4, 3, 2, 1, 0].map((k) => shiftYm(ym, -k));
+  const inc = months.map((m) => sumM('in', m)); const exp = months.map((m) => sumM('out', m));
+  const max = Math.max(1, ...inc, ...exp); const Wd = 340, H = 170, pb = 26, pt = 16; const gw = (Wd - 8) / 6; const ch = H - pb - pt;
+  let svg = `<svg viewBox="0 0 ${Wd} ${H}" style="direction:ltr" role="img" aria-label="${tr('الدخل والمصروفات خلال ستة أشهر', 'Income and expenses over six months')}"><line x1="4" x2="${Wd - 4}" y1="${H - pb}" y2="${H - pb}" stroke="var(--line)"/><line x1="4" x2="${Wd - 4}" y1="${pt}" y2="${pt}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="6" y="${pt - 4}" font-size="10" fill="var(--muted)">${esc(moneyText(max, cur))}</text>`;
+  months.forEach((m, i) => {
+    const x = 4 + i * gw + gw / 2; const hi = (inc[i] / max) * ch; const he = (exp[i] / max) * ch;
+    svg += `<rect x="${x - 15}" y="${H - pb - hi}" width="14" height="${hi}" rx="3" fill="var(--brand)"/><rect x="${x + 1}" y="${H - pb - he}" width="14" height="${he}" rx="3" fill="var(--warn)"/><text x="${x}" y="${H - 8}" font-size="10" text-anchor="middle" fill="var(--muted)">${shortMonth(Number(m.slice(5)) - 1)}</text>`;
+  });
+  svg += '</svg>';
+  const I = inc[5], E = exp[5], P = inc[4];
+  const catMap = {};
+  S.invoices.filter((i) => i.dir === 'out' && i.cur === cur && i.status === 'paid' && (i.paidAt || '').slice(0, 7) === ym).forEach((i) => { const k = i.category || 'أخرى'; catMap[k] = (catMap[k] || 0) + i.amount; });
+  S.subs.filter((s) => s.active && s.cur === cur).forEach((s) => { const k = s.category || 'أخرى'; catMap[k] = (catMap[k] || 0) + monthlyCost(s); });
+  const cats = Object.entries(catMap).sort((a, b) => b[1] - a[1]); const tot = cats.reduce((a, c) => a + c[1], 0) || 1;
+  const [y, mm] = ym.split('-').map(Number);
+  const pct = P > 0 ? Math.abs(Math.round(((I - P) / P) * 100)) : 0;
+  return `${top(tr('التقارير', 'Reports'))}<div class="stack">
+    <div class="between"><button class="iconbtn plain" data-act="repMonth" data-n="-1" aria-label="${tr('الشهر السابق', 'Previous month')}">${ic('back')}</button><b>${monthName(mm - 1)} ${y}</b><button class="iconbtn plain mirror" data-act="repMonth" data-n="1" aria-label="${tr('الشهر التالي', 'Next month')}">${ic('back')}</button></div>
+    ${curs.length > 1 ? `<div class="chips">${curs.map((c) => `<button class="chip ${c === cur ? 'on' : ''}" data-act="repCur" data-c="${c}">${c}</button>`).join('')}</div>` : ''}
+    <div class="card stack"><div class="kpis"><div class="kpi"><span class="small muted">${tr('دخل محصَّل', 'Income received')}</span><b>${money(I, cur)}</b></div><div class="kpi"><span class="small muted">${tr('مصروف مدفوع', 'Expenses paid')}</span><b>${money(E, cur)}</b></div><div class="kpi"><span class="small muted">${tr('الصافي', 'Net')}</span><b style="color:${I - E >= 0 ? 'var(--good)' : 'var(--bad)'}">${money(I - E, cur)}</b></div></div>
+      ${P > 0 ? `<p class="small muted">${I >= P ? tr(`الدخل ارتفع ${pct}% عن الشهر السابق.`, `Income is up ${pct}% from last month.`) : tr(`الدخل انخفض ${pct}% عن الشهر السابق.`, `Income is down ${pct}% from last month.`)}</p>` : ''}
+      <div class="bars">${svg}</div><div class="legend"><span><i style="background:var(--brand)"></i>${tr('دخل', 'Income')}</span><span><i style="background:var(--warn)"></i>${tr('مصروف', 'Expenses')}</span></div></div>
+    <h2>${tr('أكثر الفئات صرفاً', 'Top spending categories')}</h2>
+    ${cats.length ? `<div class="card stack">${cats.map(([k, v]) => `<div class="stack-s"><div class="between"><span>${esc(catL(k))}</span><b>${money(v, cur)}</b></div><div class="bar"><i style="width:${Math.round((v / tot) * 100)}%"></i></div></div>`).join('')}</div>` : empty('chart', tr('لا توجد مصروفات في هذا الشهر', 'No expenses this month'), tr('سجّل دفع الفواتير لتظهر هنا.', 'Mark bills as paid to see them here.'))}
+    <p class="small muted">${tr('يُحسب الدخل والمصروف من الفواتير التي سجّلتها كمدفوعة في ذلك الشهر. تشمل الفئات الاشتراكات النشطة بتكلفتها الشهرية. لا يتم تحويل العملات: كل عملة تُعرض لوحدها.', 'Income and expenses are calculated from invoices you marked as paid in that month. Categories include active subscriptions at their monthly cost. Currencies are not converted: each one is shown separately.')}</p></div>`;
+}
+
+/* ---- more ---- */
+function vMore() {
+  const p = S.profile;
+  return `${top(tr('المزيد', 'More'), { back: false })}<div class="stack">
+    <form class="card stack" data-submit="saveProfile"><h2>${tr('ملفك', 'Your profile')}</h2>${field('p-name', tr('الاسم', 'Name'), input('p-name', p.name))}${field('p-biz', tr('اسم عملك (يظهر في الرسائل)', 'Your business name (shown in messages)'), input('p-biz', p.business))}
+      <div class="two">${field('p-cur', tr('العملة الافتراضية', 'Default currency'), `<select class="in" id="p-cur">${options(CURS, p.cur)}</select>`)}${field('p-cc', tr('رمز الدولة للواتساب', 'WhatsApp country code'), input('p-cc', p.cc, 'inputmode="numeric" dir="ltr"'))}</div><button class="btn primary" type="submit">${tr('حفظ', 'Save')}</button></form>
+    <div class="card stack"><h2>${tr('اللغة', 'Language')}</h2><div class="seg"><button class="${S.lang === 'ar' ? 'on' : ''}" data-act="setLang" data-l="ar">العربية</button><button class="${S.lang === 'en' ? 'on' : ''}" data-act="setLang" data-l="en">English</button></div>${S.sample ? `<p class="small muted">${tr('البيانات التجريبية تبقى باللغة التي أُنشئت بها. امسحها وابدأ من جديد لتراها بلغتك.', 'Sample data stays in the language it was created in. Clear it to start fresh in your language.')}</p>` : ''}</div>
+    <div class="card stack"><h2>${tr('المظهر', 'Appearance')}</h2><div class="seg">${[['auto', tr('تلقائي', 'Auto')], ['light', tr('فاتح', 'Light')], ['dark', tr('داكن', 'Dark')]].map(([k, l]) => `<button class="${S.theme === k ? 'on' : ''}" data-act="theme" data-t="${k}">${l}</button>`).join('')}</div></div>
+    <div class="card stack"><h2>${tr('بياناتك', 'Your data')}</h2><p class="small muted">${tr('كل شيء محفوظ على هذا الجهاز فقط. خذ نسخة احتياطية بين فترة وأخرى، فمسح بيانات المتصفح يحذفها.', 'Everything is saved on this device only. Take a backup from time to time, because clearing browser data deletes it.')}</p>
+      <div class="btnrow"><button class="btn" data-act="backup">${tr('نسخة احتياطية', 'Backup')}</button><button class="btn" data-act="restore">${tr('استعادة', 'Restore')}</button></div>
+      <button class="btn" data-act="exportCsv">${ic('download', 'sm')} ${tr('تصدير الفواتير (CSV)', 'Export invoices (CSV)')}</button>
+      <button class="btn danger" data-act="clearAll">${ic('trash', 'sm')} ${tr('مسح كل البيانات', 'Clear all data')}</button></div>
+    <div class="card stack-s"><h2>${tr('تثبيته على الشاشة الرئيسية', 'Add it to your home screen')}</h2><p class="small muted">${tr('افتح الصفحة في Chrome، ثم قائمة النقاط الثلاث ← «إضافة إلى الشاشة الرئيسية». يعمل بعدها كأنه تطبيق.', 'Open the page in Chrome, then the three-dot menu → “Add to Home screen”. It then opens like an app.')}</p></div>
+    <div class="card stack-s"><h2>${tr('عن هذا التطبيق', 'About this app')}</h2><p class="small muted">${tr('TaskMate يعمل بالكامل داخل المتصفح. «المساعد» يعتمد على قوالب وقواعد بسيطة ويجهّز مسودات رسائل ومواعيد، ولا يتصل بأي نموذج ذكاء اصطناعي، ولا يرسل أي رسالة بنفسه: أنت من يضغط إرسال.', 'TaskMate runs entirely in your browser. The assistant uses templates and simple rules to prepare draft messages and appointments. It does not connect to any AI model and never sends anything by itself: you are the one who presses send.')}</p></div></div>`;
+}
+
+/* ================= task wizard ================= */
+const STOP = ['شركة', 'مؤسسة', 'مكتب', 'السيد', 'الأستاذ', 'company', 'co.', 'ltd', 'inc', 'client', 'mr', 'mrs', 'dr'];
+function clientIn(text) {
+  const low = text.toLowerCase();
+  return S.clients.find((c) => low.includes(c.name.toLowerCase())) || S.clients.find((c) => { const tk = c.name.split(/\s+/).find((x) => x.length >= 3 && !STOP.includes(x.toLowerCase())); return tk && low.includes(tk.toLowerCase()); });
+}
+function guess(text) {
+  const t = text.trim(); const w = { type: 'other', text: t, clientId: '', invoiceId: '', date: '', time: '', subject: '', action: 'remind', remindOn: addDays(today(), 1) };
+  const cl = clientIn(t); if (cl) w.clientId = cl.id;
+  if (/بريد|ايميل|إيميل|email|e-mail|mail/i.test(t)) w.type = 'email';
+  else if (/موعد|احجز|حجز|اجتماع|مقابلة|appointment|book|meeting|interview/i.test(t)) w.type = 'appt';
+  else if (cl && /ذكر|تابع|متابعة|طالب|مطالبة|اتصل|راسل|remind|follow|chase|call|message|text|ping/i.test(t)) w.type = 'followup';
+  else if (/ادفع|دفع|سداد|سدد|جدول|\bpay\b|payment|settle|schedule/i.test(t)) w.type = 'invoice';
+  else if (cl) w.type = 'followup';
+  if (w.type === 'appt') { w.date = addDays(today(), 1); w.time = '10:00'; }
+  return w;
+}
+const newW = () => ({ type: 'followup', text: '', clientId: '', invoiceId: '', date: '', time: '', subject: '', action: 'remind', remindOn: addDays(today(), 1) });
+function captureW() {
+  if (!W) return;
+  const g = (id) => { const e = document.getElementById(id); return e ? e.value.trim() : null; };
+  const m = { text: 'w-text', clientId: 'w-client', invoiceId: 'w-invoice', date: 'w-date', time: 'w-time', subject: 'w-subject', action: 'w-action', remindOn: 'w-remind' };
+  Object.keys(m).forEach((k) => { const v = g(m[k]); if (v !== null) W[k] = v; });
+}
+function vTaskNew() {
+  if (!W) W = newW();
+  const sel = (k) => `<button type="button" class="opt ${W.type === k ? 'on' : ''}" data-act="wType" data-t="${k}" aria-pressed="${W.type === k}">${ic(tt(k).icon)}<span>${tt(k).label}</span></button>`;
+  const unpaid = S.invoices.filter((i) => i.status !== 'paid');
+  let extra = '';
+  if (W.type === 'followup') extra = field('w-client', tr('العميل أو المورّد', 'Client or supplier'), `<select class="in" id="w-client">${clientOptions(W.clientId, tr('اختر...', 'Choose…'))}</select>`);
+  if (W.type === 'email') extra = field('w-client', tr('العميل (اختياري)', 'Client (optional)'), `<select class="in" id="w-client">${clientOptions(W.clientId)}</select>`) + field('w-subject', tr('عنوان البريد (اختياري)', 'Email subject (optional)'), input('w-subject', W.subject));
+  if (W.type === 'appt') extra = `<div class="two">${field('w-date', tr('التاريخ', 'Date'), input('w-date', W.date, 'type="date"'))}${field('w-time', tr('الوقت', 'Time'), input('w-time', W.time, 'type="time"'))}</div>` + field('w-client', tr('العميل (اختياري)', 'Client (optional)'), `<select class="in" id="w-client">${clientOptions(W.clientId)}</select>`);
+  if (W.type === 'invoice') extra = field('w-invoice', tr('الفاتورة', 'Invoice'), `<select class="in" id="w-invoice"><option value="">${tr('اختر فاتورة...', 'Choose an invoice…')}</option>${options(unpaid, W.invoiceId, (i) => i.id, (i) => `#${i.number} · ${partyOf(i)} · ${moneyText(i.amount, i.cur)}`)}</select>`) +
+    field('w-action', tr('ماذا تريد؟', 'What do you want?'), `<select class="in" id="w-action"><option value="remind" ${W.action === 'remind' ? 'selected' : ''}>${tr('أذكّرني بها في تاريخ', 'Remind me on a date')}</option><option value="paid" ${W.action === 'paid' ? 'selected' : ''}>${tr('سجّلها كمدفوعة اليوم', 'Mark it as paid today')}</option></select>`) +
+    (W.action === 'remind' ? field('w-remind', tr('تاريخ التذكير', 'Reminder date'), input('w-remind', W.remindOn, 'type="date"')) : '');
+  const ph = W.type === 'followup' ? tr('مثال: تابع الفاتورة المتأخرة', 'e.g. Chase the overdue invoice') : W.type === 'appt' ? tr('مثال: اجتماع مع العميل', 'e.g. Meeting with the client') : tr('اكتب هنا...', 'Write here…');
+  return `${top(tr('مهمة جديدة', 'New task'), { right: '' })}<form class="stack" data-submit="wNext" novalidate>
+    <div class="lbl">${tr('نوع المهمة', 'Task type')}</div><div class="stack-s">${TT_KEYS.map(sel).join('')}</div>
+    ${field('w-text', W.type === 'appt' ? tr('عنوان الموعد', 'Appointment title') : tr('اكتب ما تريد إنجازه', 'What do you want to get done?'), `<textarea class="in" id="w-text" placeholder="${ph}">${esc(W.text)}</textarea>`)}
+    ${extra}<p class="formerr" role="alert"></p><button class="btn primary block" type="submit">${tr('التالي', 'Next')}</button></form>`;
+}
+function planFor(w) {
+  const c = byId(S.clients, w.clientId);
+  if (w.type === 'followup') return [tr(`قراءة بيانات ${c ? c.name : 'العميل'}`, `Read ${c ? c.name : 'the client'}'s details`), tr('البحث عن فواتيره غير المسدّدة', 'Look up their unpaid invoices'), tr('كتابة رسالة متابعة مهذبة بالعربية', 'Write a polite follow-up message'), c && c.phone ? tr('تجهيز رابط واتساب جاهز للضغط', 'Prepare a ready-to-tap WhatsApp link') : tr('تجهيز النص للنسخ (لا يوجد رقم هاتف)', 'Prepare the text to copy (no phone number saved)'), tr('حفظ المهمة كمسودة بانتظار تأكيدك بعد الإرسال', 'Save the task as a draft until you confirm it was sent')];
+  if (w.type === 'email') return [tr('كتابة مسودة بريد بعنوان ونص', 'Write a draft email with a subject and body'), c && c.email ? tr(`تجهيز العنوان ${c.email}`, `Prepare the address ${c.email}`) : tr('تجهيز النص للنسخ', 'Prepare the text to copy'), tr('حفظ المهمة كمسودة بانتظار تأكيدك', 'Save the task as a draft until you confirm')];
+  if (w.type === 'appt') return [tr('فحص وجود موعد آخر بنفس الوقت', 'Check for another appointment at the same time'), tr('إنشاء الموعد في التقويم', 'Create the appointment in the calendar'), tr('إظهار تنبيه يوم الموعد في الإشعارات', 'Show an alert on the day in Alerts')];
+  if (w.type === 'invoice') return w.action === 'paid' ? [tr('تسجيل الفاتورة كمدفوعة بتاريخ اليوم', 'Mark the invoice as paid today'), tr('تحديث التقارير تلقائياً', 'Update the reports automatically')] : [tr(`إضافة تذكير بتاريخ ${fmtDate(w.remindOn)}`, `Add a reminder for ${fmtDate(w.remindOn)}`), tr('إظهار التنبيه في الإشعارات عند حلول التاريخ', 'Show the alert in Alerts when the date arrives')];
+  return [tr('حفظ المهمة في القائمة', 'Save the task in the list'), tr('يمكنك تعليمها منفّذة لاحقاً', 'You can mark it done later')];
+}
+function vTaskPlan() {
+  const m = tt(W.type); const c = cname(W.clientId);
+  return `${top(tr('تفاصيل المهمة', 'Task details'))}<div class="stack">
+    <div class="card stack-s"><div class="gap"><span class="avatar">${ic(m.icon)}</span><div class="grow"><b>${m.label}</b><br><span class="muted">${esc(W.text || (W.type === 'invoice' ? tr('دفع / جدولة فاتورة', 'Pay / schedule an invoice') : ''))}</span></div></div>
+      ${c ? `<div class="between"><span class="muted">${tr('العميل', 'Client')}</span><b>${esc(c)}</b></div>` : ''}${W.type === 'appt' ? `<div class="between"><span class="muted">${tr('الموعد', 'When')}</span><b>${fmtDate(W.date)} · ${esc(W.time)}</b></div>` : ''}</div>
+    <h2>${tr('ما الذي سيتم إنجازه؟', 'What will be done?')}</h2><div class="card"><ul class="plan">${planFor(W).map((p) => `<li>${ic('check', 'sm')}<span>${esc(p)}</span></li>`).join('')}</ul></div>
+    <p class="small muted">${tr('التنفيذ يتم داخل التطبيق فقط. لن يُرسَل أي شيء إلى أي شخص من تلقاء نفسه.', 'Everything happens inside the app. Nothing is sent to anyone automatically.')}</p>
+    <button class="btn primary block" data-act="wRun">${tr('تنفيذ المهمة', 'Run the task')}</button><button class="btn block" data-act="back">${tr('تعديل', 'Edit')}</button></div>`;
+}
+function execTask(w) {
+  const t = today(); const steps = []; const c = byId(S.clients, w.clientId);
+  const sig = S.profile.name ? `\n${S.profile.name}${S.profile.business ? ' — ' + S.profile.business : ''}` : '';
+  const task = { id: uid(), type: w.type, text: w.text || '', clientId: w.clientId, invoiceId: w.invoiceId, status: 'done', createdAt: t, result: { steps, message: '', subject: '', phone: '', email: '' } };
+  const R = task.result; const en = S.lang === 'en';
+  if (w.type === 'followup') {
+    steps.push({ ok: true, t: tr(`تمت قراءة بيانات ${c.name}`, `Read ${c.name}'s details`) });
+    const inv = unpaidIn(c.id); steps.push({ ok: true, t: inv.length ? tr(`وُجدت ${inv.length} فاتورة غير مسدّدة`, `Found ${inv.length} unpaid invoice${inv.length === 1 ? '' : 's'}`) : tr('لا توجد فواتير غير مسدّدة لهذا العميل', 'No unpaid invoices for this client') });
+    let body;
+    if (inv.length) {
+      const lines = inv.map((i) => { const n = diffDays(i.due, t); const amt = en ? moneyText(i.amount, i.cur) : `⁦${moneyText(i.amount, i.cur)}⁩`;
+        return en ? `• Invoice #${i.number} for ${amt} — ${n < 0 ? `${-n} day${-n === 1 ? '' : 's'} overdue (due ${fmtDate(i.due)})` : `due ${fmtDate(i.due)}`}` : `• فاتورة رقم ${i.number} بقيمة ${amt} — ${n < 0 ? `متأخرة ${-n} يوم (الاستحقاق ${fmtDate(i.due)})` : `تستحق ${fmtDate(i.due)}`}`; });
+      body = (en ? 'A quick reminder about:\n' : 'أود تذكيرك بما يلي:\n') + lines.join('\n') + (en ? '\n\nCould you let me know when you will be able to settle this?' : '\n\nنرجو إفادتي بموعد السداد المناسب لك.');
+    } else body = w.text;
+    R.message = en ? `Hi ${c.name},\nI hope you are well.\n\n${body}\n\nThank you.${sig}` : `مرحباً ${c.name}،\nأتمنى أن تكون بخير.\n\n${body}\n\nشكراً لتعاونك.${sig}`; R.phone = c.phone || ''; R.email = c.email || '';
+    steps.push({ ok: true, t: tr('كُتبت رسالة المتابعة', 'Wrote the follow-up message') });
+    steps.push(c.phone ? { ok: true, t: tr('جُهّز رابط واتساب', 'Prepared a WhatsApp link') } : { ok: false, t: tr('لا يوجد رقم هاتف: انسخ الرسالة وأرسلها بطريقتك', 'No phone number: copy the message and send it your own way') });
+    task.status = 'draft';
+  } else if (w.type === 'email') {
+    R.subject = w.subject || (tr('بخصوص: ', 'Regarding: ') + w.text.slice(0, 50)); R.email = c ? c.email : '';
+    R.message = en ? `Hi${c ? ' ' + c.name : ''},\n\n${w.text}\n\nBest regards${sig}` : `مرحباً${c ? ' ' + c.name : ''}،\n\n${w.text}\n\nمع خالص التحية${sig}`;
+    steps.push({ ok: true, t: tr('كُتبت مسودة البريد', 'Wrote the email draft') }); steps.push(R.email ? { ok: true, t: tr(`العنوان: ${R.email}`, `Address: ${R.email}`) } : { ok: false, t: tr('لا يوجد عنوان بريد محفوظ: أضفه عند الإرسال', 'No email address saved: add it when you send') });
+    task.status = 'draft';
+  } else if (w.type === 'appt') {
+    const clash = S.appts.find((a) => a.date === w.date && a.time === w.time);
+    steps.push(clash ? { ok: false, t: tr(`تنبيه: لديك موعد آخر في الوقت نفسه (${clash.title})`, `Heads up: you already have another appointment at that time (${clash.title})`) } : { ok: true, t: tr('لا يوجد تعارض مع مواعيدك', 'No clash with your appointments') });
+    S.appts.push({ id: uid(), title: w.text, clientId: w.clientId, date: w.date, time: w.time, note: '' });
+    steps.push({ ok: true, t: tr(`أُضيف الموعد: ${fmtDate(w.date)} الساعة ${w.time}`, `Added the appointment: ${fmtDate(w.date)} at ${w.time}`) }); steps.push({ ok: true, t: tr('سيظهر في الإشعارات قبل يوم من الموعد', 'It will show in Alerts the day before') });
+  } else if (w.type === 'invoice') {
+    const inv = byId(S.invoices, w.invoiceId); task.text = task.text || tr(`فاتورة #${inv.number}`, `Invoice #${inv.number}`);
+    if (w.action === 'paid') { inv.status = 'paid'; inv.paidAt = t; steps.push({ ok: true, t: tr(`سُجّلت الفاتورة #${inv.number} كمدفوعة`, `Marked invoice #${inv.number} as paid`) }); steps.push({ ok: true, t: tr('حُدّثت التقارير', 'Updated the reports') }); }
+    else { inv.remindOn = w.remindOn; steps.push({ ok: true, t: tr(`أُضيف تذكير للفاتورة #${inv.number} بتاريخ ${fmtDate(w.remindOn)}`, `Added a reminder for invoice #${inv.number} on ${fmtDate(w.remindOn)}`) }); steps.push({ ok: true, t: tr('سيظهر التنبيه في الإشعارات', 'The alert will appear in Alerts') }); }
+  } else steps.push({ ok: true, t: tr('حُفظت المهمة في القائمة', 'Saved the task in the list') });
+  S.tasks.push(task); save(); return task;
+}
+function resultBlock(k, animate) {
+  const R = k.result; const m = tt(k.type);
+  const steps = `<ul class="steps">${R.steps.map((s, i) => `<li style="${animate ? `animation-delay:${i * 0.5}s` : 'animation:none;opacity:1'}"><span class="tick ${s.ok ? '' : 'warn'}">${ic(s.ok ? 'check' : 'alert', 'sm')}</span><span>${esc(s.t)}</span></li>`).join('')}</ul>`;
+  const d = animate ? `style="opacity:0;animation:appear .4s ease-out ${R.steps.length * 0.5}s forwards"` : '';
+  let tail = '';
+  if (k.status === 'draft') {
+    tail = `<div class="stack" ${d}><div class="banner info">${ic('alert', 'sm')}<div><b>${tr('المسودة جاهزة. لم يُرسَل شيء بعد.', 'The draft is ready. Nothing has been sent yet.')}</b><br>${tr('راجع النص ثم أرسله بنفسك.', 'Review the text, then send it yourself.')}</div></div>${R.subject ? `<div class="between"><span class="muted">${tr('العنوان', 'Subject')}</span><b>${esc(R.subject)}</b></div>` : ''}<div class="msg" id="msg-text">${esc(R.message)}</div>
+      <div class="btnrow"><button class="btn" data-act="copyMsg" data-id="${k.id}">${ic('copy', 'sm')} ${tr('نسخ', 'Copy')}</button>${R.phone ? `<a class="btn primary" href="${waLink(R.phone, R.message)}" target="_blank" rel="noopener">${ic('send', 'sm')} ${tr('فتح واتساب', 'Open WhatsApp')}</a>` : ''}</div>
+      <button class="btn good block" data-act="markSent" data-id="${k.id}">${tr('تم الإرسال، أنهِ المهمة', 'Sent — finish the task')}</button></div>`;
+  } else tail = `<div class="banner info" ${d}>${ic('check', 'sm')}<div><b>${tr('تم تنفيذ المهمة', 'Task completed')}</b></div></div>`;
+  return `<div class="stack"><div class="gap"><span class="avatar ${k.status === 'draft' ? '' : 'good'}">${ic(m.icon)}</span><div class="grow"><b>${m.label}</b><br><span class="muted small">${esc(k.text)}</span></div></div>${steps}${tail}</div>`;
+}
+function vTaskRun() {
+  const k = byId(S.tasks, V.p.id); if (!k) return `${top(tr('المهمة', 'Task'))}${empty('tasks', tr('المهمة غير موجودة', 'Task not found'), '')}`;
+  return `${top(tr('نتيجة التنفيذ', 'Result'), { back: false })}<div class="stack">${resultBlock(k, V.p.fresh !== false)}<div class="btnrow"><button class="btn" data-act="openTask" data-id="${k.id}">${tr('عرض التفاصيل', 'View details')}</button><button class="btn" data-act="tab" data-v="home">${tr('الرئيسية', 'Home')}</button></div></div>`;
+}
+function vTaskDetail() {
+  const k = byId(S.tasks, V.p.id); if (!k) return `${top(tr('المهمة', 'Task'))}${empty('tasks', tr('المهمة غير موجودة', 'Task not found'), tr('ربما حُذفت.', 'It may have been deleted.'))}`;
+  return `${top(tr('تفاصيل المهمة', 'Task details'))}<div class="stack">${resultBlock(k, false)}<button class="btn danger" data-act="taskDel" data-id="${k.id}">${ic('trash', 'sm')} ${tr('حذف المهمة', 'Delete task')}</button></div>`;
+}
+
+/* ================= render ================= */
+const VIEWS = { onboarding: vOnboarding, home: vHome, tasks: vTasks, alerts: vAlerts, more: vMore, invoices: vInvoices, clients: vClients, clientDetail: vClientDetail, appts: vAppts, subs: vSubs, docs: vDocs, reports: vReports, taskNew: vTaskNew, taskPlan: vTaskPlan, taskRun: vTaskRun, taskDetail: vTaskDetail };
+const LISTS = { invoices: invList, clients: clientList, subs: subList, docs: docList, tasks: tasksList };
+function render(scrollTop) {
+  applyTheme(); applyLang();
+  if (!S.onboarded) V = { name: 'onboarding', p: {}, stack: [] };
+  const fn = VIEWS[V.name] || vHome;
+  app.innerHTML = fn() + (NO_NAV.includes(V.name) ? '' : navHtml());
+  if (scrollTop) window.scrollTo(0, 0);
+  if (V.p.open && V.name === 'invoices') { const i = byId(S.invoices, V.p.open); V.p.open = ''; if (i) invoiceSheet(i); }
+}
+
+/* ================= actions ================= */
+const ACT = {
+  closeSheet: () => closeSheet(),
+  back: () => back(),
+  tab: (el) => tab(el.dataset.v),
+  go: (el) => go(el.dataset.v, el.dataset.p ? JSON.parse(el.dataset.p) : {}),
+  alertGo: (el) => go(el.dataset.v, el.dataset.p ? JSON.parse(el.dataset.p) : {}),
+  newTask: () => { W = newW(); go('taskNew'); },
+  obEmpty: () => { S.profile.name = val('ob-name'); S.onboarded = true; save(); V = { name: 'home', p: {}, stack: [] }; render(true); },
+  taskFilter: (el) => { V.p.f = el.dataset.f; render(false); },
+  openTask: (el) => go('taskDetail', { id: el.dataset.id }),
+  wType: (el) => { captureW(); W.type = el.dataset.t; render(false); },
+  wRun: () => { const k = execTask(W); W = null; V = { name: 'taskRun', p: { id: k.id, fresh: true }, stack: [] }; render(true); },
+  copyMsg: (el) => { const k = byId(S.tasks, el.dataset.id); if (k) copyText((k.result.subject ? k.result.subject + '\n\n' : '') + k.result.message); },
+  markSent: (el) => { const k = byId(S.tasks, el.dataset.id); if (k) { k.status = 'done'; if (V.name === 'taskRun') V.p.fresh = false; commit(tr('أُنهيت المهمة', 'Task finished')); } },
+  taskDel: (el) => confirmSheet(tr('حذف هذه المهمة؟', 'Delete this task?'), 'doTaskDel', el.dataset.id),
+  doTaskDel: (el) => { S.tasks = S.tasks.filter((k) => k.id !== el.dataset.id); closeSheet(); V = { name: 'tasks', p: {}, stack: [] }; commit(tr('تم الحذف', 'Deleted')); },
+
+  invTab: (el) => { V.p.tab = el.dataset.k; render(false); },
+  invDirF: (el) => { V.p.dir = el.dataset.k; render(false); },
+  invOpen: (el) => { const i = byId(S.invoices, el.dataset.id); if (i) invoiceSheet(i); },
+  invNew: () => invoiceForm(null),
+  invEdit: (el) => { const i = byId(S.invoices, el.dataset.id); closeSheet(); if (i) invoiceForm(i); },
+  invDel: (el) => confirmSheet(tr('حذف هذه الفاتورة؟', 'Delete this invoice?'), 'doInvDel', el.dataset.id),
+  doInvDel: (el) => { S.invoices = S.invoices.filter((i) => i.id !== el.dataset.id); closeSheet(); commit(tr('تم الحذف', 'Deleted')); },
+  invToggle: (el) => { const i = byId(S.invoices, el.dataset.id); if (!i) return; if (i.status === 'paid') { i.status = 'unpaid'; i.paidAt = ''; } else { i.status = 'paid'; i.paidAt = today(); i.remindOn = ''; } closeSheet(); commit(i.status === 'paid' ? tr('سُجّلت كمدفوعة', 'Marked as paid') : tr('أُلغي تسجيل الدفع', 'Marked as unpaid')); },
+  invFollow: (el) => { const i = byId(S.invoices, el.dataset.id); if (!i) return; closeSheet(); W = newW(); W.type = 'followup'; W.clientId = i.clientId; W.text = tr(`متابعة فاتورة #${i.number}`, `Follow up invoice #${i.number}`); go('taskPlan'); },
+  invDirSet: (el) => { const d = el.dataset.d; $('#i-dir').value = d; el.parentElement.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b === el)); $('[data-for=in]').hidden = d !== 'in'; $('[data-for=out]').hidden = d !== 'out'; },
+
+  clientNew: () => clientForm(null),
+  clientEdit: (el) => clientForm(byId(S.clients, el.dataset.id)),
+  clientDel: (el) => confirmSheet(tr('حذف هذا العميل؟ تبقى فواتيره محفوظة باسمه.', 'Delete this client? Their invoices are kept under their name.'), 'doClientDel', el.dataset.id),
+  doClientDel: (el) => {
+    const c = byId(S.clients, el.dataset.id); if (!c) return;
+    S.invoices.forEach((i) => { if (i.clientId === c.id) { i.clientId = ''; i.party = c.name; } });
+    S.appts.forEach((a) => { if (a.clientId === c.id) a.clientId = ''; }); S.docs.forEach((d) => { if (d.clientId === c.id) d.clientId = ''; });
+    S.clients = S.clients.filter((x) => x.id !== c.id); closeSheet(); V = { name: 'clients', p: {}, stack: [] }; commit(tr('تم الحذف', 'Deleted'));
+  },
+  followClient: (el) => { const c = byId(S.clients, el.dataset.id); if (!c) return; W = newW(); W.type = 'followup'; W.clientId = c.id; W.text = tr(`متابعة ${c.name}`, `Follow up with ${c.name}`); go('taskPlan'); },
+
+  apptDay: (el) => { V.p.day = el.dataset.d; render(false); },
+  apptMonth: (el) => { V.p.ym = shiftYm(V.p.ym || today().slice(0, 7), Number(el.dataset.n)); render(false); },
+  apptNew: () => apptForm(null, V.p.day),
+  apptEdit: (el) => apptForm(byId(S.appts, el.dataset.id)),
+  apptDel: (el) => { S.appts = S.appts.filter((a) => a.id !== el.dataset.id); closeSheet(); commit(tr('تم الحذف', 'Deleted')); },
+
+  subNew: () => subForm(null),
+  subEdit: (el) => subForm(byId(S.subs, el.dataset.id)),
+  subDel: (el) => { S.subs = S.subs.filter((s) => s.id !== el.dataset.id); closeSheet(); commit(tr('تم الحذف', 'Deleted')); },
+  subFilter: (el) => { V.p.f = el.dataset.f; render(false); },
+
+  docNew: () => docForm(null),
+  docEdit: (el) => docForm(byId(S.docs, el.dataset.id)),
+  docDel: (el) => { S.docs = S.docs.filter((d) => d.id !== el.dataset.id); closeSheet(); commit(tr('تم الحذف', 'Deleted')); },
+  docFilter: (el) => { V.p.f = el.dataset.f; render(false); },
+
+  repMonth: (el) => { V.p.ym = shiftYm(V.p.ym || today().slice(0, 7), Number(el.dataset.n)); render(false); },
+  repCur: (el) => { V.p.cur = el.dataset.c; render(false); },
+
+  theme: (el) => { S.theme = el.dataset.t; commit(); },
+  backup: () => sheet(`<div class="grab"></div><h2>${tr('نسخة احتياطية', 'Backup')}</h2><p class="small muted" style="margin-bottom:10px">${tr('انسخ هذا النص واحفظه في مكان آمن (ملاحظات أو رسالة لنفسك). تستطيع استعادته لاحقاً من «استعادة».', 'Copy this text and keep it somewhere safe (notes or a message to yourself). You can restore it later from “Restore”.')}</p><textarea class="in" id="b-text" readonly style="min-height:160px;direction:ltr;font-size:12px">${esc(JSON.stringify(S))}</textarea><div class="btnrow" style="margin-top:12px"><button class="btn primary" data-act="copyBackup">${ic('copy', 'sm')} ${tr('نسخ', 'Copy')}</button><button class="btn" data-act="closeSheet">${tr('إغلاق', 'Close')}</button></div>`),
+  copyBackup: () => { const t = $('#b-text'); copyText(t.value); t.select(); },
+  restore: () => sheet(`<div class="grab"></div><h2>${tr('استعادة نسخة', 'Restore a backup')}</h2><p class="small muted" style="margin-bottom:10px">${tr('الصق النص الذي نسخته سابقاً. سيحلّ محل بياناتك الحالية.', 'Paste the text you copied earlier. It will replace your current data.')}</p><textarea class="in" id="r-text" style="min-height:160px;direction:ltr;font-size:12px"></textarea><p class="formerr" id="r-err" role="alert"></p><div class="btnrow" style="margin-top:12px"><button class="btn primary" data-act="doRestore">${tr('استعادة', 'Restore')}</button><button class="btn" data-act="closeSheet">${tr('إلغاء', 'Cancel')}</button></div>`),
+  doRestore: () => {
+    try {
+      const o = JSON.parse($('#r-text').value);
+      if (!o || o.v !== 1 || !Array.isArray(o.invoices) || !Array.isArray(o.clients)) throw new Error('bad');
+      S = Object.assign(blank(), o, { onboarded: true, profile: Object.assign(blank().profile, o.profile || {}) }); closeSheet(); V = { name: 'home', p: {}, stack: [] }; commit(tr('تمت الاستعادة', 'Restored'));
+    } catch (e) { $('#r-err').textContent = tr('النص غير صالح. تأكد أنك نسخته كاملاً من «نسخة احتياطية».', 'Invalid text. Make sure you copied all of it from “Backup”.'); }
+  },
+  clearAll: () => confirmSheet(tr('مسح كل البيانات؟ لا يمكن التراجع.', 'Clear all data? This cannot be undone.'), 'doClear'),
+  doClear: () => { S = Object.assign(blank(), { onboarded: true, lang: S.lang, profile: S.profile, theme: S.theme }); closeSheet(); V = { name: 'home', p: {}, stack: [] }; commit(tr('تم المسح', 'Cleared')); },
+
+  toggleLang: () => { S.lang = S.lang === 'en' ? 'ar' : 'en'; save(); render(false); },
+  setLang: (el) => { S.lang = el.dataset.l === 'en' ? 'en' : 'ar'; save(); render(false); },
+  invCopy: (el) => {
+    const i = byId(S.invoices, el.dataset.id); if (!i) return;
+    const lines = [`${tr('فاتورة', 'Invoice')} #${i.number}`, `${i.dir === 'in' ? tr('العميل', 'Client') : tr('الجهة', 'Payee')}: ${partyOf(i)}`, `${tr('المبلغ', 'Amount')}: ${moneyText(i.amount, i.cur)}`, `${tr('الاستحقاق', 'Due date')}: ${fmtDate(i.due)}`];
+    if (i.title) lines.push(`${tr('البيان', 'Description')}: ${i.title}`);
+    lines.push(`${tr('الحالة', 'Status')}: ${invPill(i)[1]}`); closeSheet(); copyText(lines.join('\n'));
+  },
+  exportCsv: () => {
+    const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = [['number', 'direction', 'party', 'description', 'amount', 'currency', 'due', 'status', 'paid_on', 'category'].map(q).join(',')]
+      .concat(S.invoices.map((i) => [i.number, i.dir === 'in' ? 'receivable' : 'payable', partyOf(i), i.title, i.amount, i.cur, i.due, i.status, i.paidAt, i.category].map(q).join(',')));
+    sheet(`<div class="grab"></div><h2>${tr('تصدير الفواتير', 'Export invoices')}</h2><p class="small muted" style="margin-bottom:10px">${tr('انسخ النص والصقه في ملف نصي أو جدول (Excel / Google Sheets).', 'Copy the text and paste it into a text file or a spreadsheet (Excel / Google Sheets).')}</p><textarea class="in" id="b-text" readonly style="min-height:160px;direction:ltr;font-size:12px">${esc(rows.join('\n'))}</textarea><div class="btnrow" style="margin-top:12px"><button class="btn primary" data-act="copyBackup">${ic('copy', 'sm')} ${tr('نسخ', 'Copy')}</button><button class="btn" data-act="closeSheet">${tr('إغلاق', 'Close')}</button></div>`);
+  },
+};
+
+const SUBMIT = {
+  obStart: () => { S.profile.name = val('ob-name'); loadSample(); S.onboarded = true; save(); V = { name: 'home', p: {}, stack: [] }; render(true); },
+  ask: () => { const t = val('ask-in'); if (t.length < 2) { toast(tr('اكتب طلبك أولاً', 'Type your request first')); return; } W = guess(t); go('taskNew'); },
+  wNext: (f) => {
+    captureW();
+    if (W.type !== 'invoice' && W.text.length < 2) return formFail(f, 'w-text', tr('اكتب ما تريد إنجازه.', 'Write what you want to get done.'));
+    if (W.type === 'followup' && !W.clientId) return formFail(f, 'w-client', S.clients.length ? tr('اختر العميل.', 'Choose the client.') : tr('أضف عميلاً أولاً من صفحة العملاء.', 'Add a client first from the Clients page.'));
+    if (W.type === 'appt') { if (!validDate(W.date)) return formFail(f, 'w-date', tr('اختر تاريخ الموعد.', 'Choose the appointment date.')); if (!/^\d{2}:\d{2}$/.test(W.time)) return formFail(f, 'w-time', tr('اختر وقت الموعد.', 'Choose the appointment time.')); }
+    if (W.type === 'invoice') { if (!W.invoiceId) return formFail(f, 'w-invoice', tr('اختر الفاتورة.', 'Choose the invoice.')); if (W.action === 'remind' && !validDate(W.remindOn)) return formFail(f, 'w-remind', tr('اختر تاريخ التذكير.', 'Choose the reminder date.')); }
+    go('taskPlan');
+  },
+  saveInvoice: (f) => {
+    const id = f.dataset.id; const dir = val('i-dir'); const amount = toNum(val('i-amount')); const due = val('i-due');
+    const clientId = dir === 'in' ? val('i-client') : ''; const party = val('i-party');
+    if (!clientId && !party) return formFail(f, 'i-party', tr('اكتب اسم الجهة أو اختر عميلاً.', 'Enter a payee name or choose a client.'));
+    if (!(amount > 0)) return formFail(f, 'i-amount', tr('أدخل مبلغاً أكبر من صفر.', 'Enter an amount greater than zero.'));
+    if (!validDate(due)) return formFail(f, 'i-due', tr('اختر تاريخ استحقاق صحيحاً.', 'Choose a valid due date.'));
+    const num = parseInt(toNum(val('i-num')), 10) || S.seq + 1; const paid = $('#i-paid').checked;
+    const data = { dir, clientId, party: clientId ? '' : party, title: val('i-title'), amount, cur: val('i-cur'), number: num, due, category: dir === 'out' ? val('i-cat') : '' };
+    const i = id ? byId(S.invoices, id) : null;
+    if (i) { const was = i.status === 'paid'; Object.assign(i, data); i.status = paid ? 'paid' : 'unpaid'; i.paidAt = paid ? (was ? i.paidAt : today()) : ''; }
+    else S.invoices.push(Object.assign({ id: uid(), status: paid ? 'paid' : 'unpaid', paidAt: paid ? today() : '' }, data));
+    S.seq = Math.max(S.seq, num); closeSheet(); commit(tr('تم حفظ الفاتورة', 'Invoice saved'));
+  },
+  saveClient: (f) => {
+    const name = val('c-name'); if (name.length < 2) return formFail(f, 'c-name', tr('اكتب اسم العميل.', 'Enter the client name.'));
+    const data = { name, phone: val('c-phone'), email: val('c-email'), note: val('c-note') }; const c = f.dataset.id ? byId(S.clients, f.dataset.id) : null;
+    if (c) Object.assign(c, data); else S.clients.push(Object.assign({ id: uid() }, data));
+    closeSheet(); commit(tr('تم حفظ العميل', 'Client saved'));
+  },
+  saveAppt: (f) => {
+    const title = val('a-title'), date = val('a-date'), time = val('a-time');
+    if (title.length < 2) return formFail(f, 'a-title', tr('اكتب عنوان الموعد.', 'Enter a title.')); if (!validDate(date)) return formFail(f, 'a-date', tr('اختر التاريخ.', 'Choose a date.')); if (!/^\d{2}:\d{2}$/.test(time)) return formFail(f, 'a-time', tr('اختر الوقت.', 'Choose a time.'));
+    const data = { title, date, time, clientId: val('a-client'), note: val('a-note') }; const a = f.dataset.id ? byId(S.appts, f.dataset.id) : null;
+    if (a) Object.assign(a, data); else S.appts.push(Object.assign({ id: uid() }, data));
+    V.p.day = date; V.p.ym = date.slice(0, 7); closeSheet(); commit(tr('تم حفظ الموعد', 'Appointment saved'));
+  },
+  saveSub: (f) => {
+    const name = val('s-name'), price = toNum(val('s-price')), next = val('s-next');
+    if (name.length < 2) return formFail(f, 's-name', tr('اكتب اسم الاشتراك.', 'Enter the subscription name.')); if (!(price > 0)) return formFail(f, 's-price', tr('أدخل سعراً أكبر من صفر.', 'Enter a price greater than zero.')); if (!validDate(next)) return formFail(f, 's-next', tr('اختر تاريخ التجديد.', 'Choose the renewal date.'));
+    const data = { name, price, cur: val('s-cur'), cycle: val('s-cycle'), next, category: val('s-cat'), active: $('#s-active').checked }; const s = f.dataset.id ? byId(S.subs, f.dataset.id) : null;
+    if (s) Object.assign(s, data); else S.subs.push(Object.assign({ id: uid() }, data));
+    closeSheet(); commit(tr('تم حفظ الاشتراك', 'Subscription saved'));
+  },
+  saveDoc: (f) => {
+    const title = val('d-title'), exp = val('d-exp');
+    if (title.length < 2) return formFail(f, 'd-title', tr('اكتب اسم المستند.', 'Enter the document name.')); if (exp && !validDate(exp)) return formFail(f, 'd-exp', tr('تاريخ الانتهاء غير صحيح.', 'The expiry date is not valid.'));
+    const data = { title, category: val('d-cat'), clientId: val('d-client'), expiry: exp, note: val('d-note') }; const d = f.dataset.id ? byId(S.docs, f.dataset.id) : null;
+    if (d) Object.assign(d, data); else S.docs.push(Object.assign({ id: uid() }, data));
+    closeSheet(); commit(tr('تم حفظ المستند', 'Document saved'));
+  },
+  saveProfile: () => {
+    S.profile.name = val('p-name'); S.profile.business = val('p-biz'); S.profile.cur = val('p-cur'); S.profile.cc = val('p-cc').replace(/\D/g, '') || '963'; commit(tr('تم الحفظ', 'Saved'));
+  },
+};
+
+document.addEventListener('click', (e) => { const el = e.target.closest('[data-act]'); if (!el) return; const fn = ACT[el.dataset.act]; if (fn) fn(el, e); });
+document.addEventListener('submit', (e) => { const f = e.target.closest('[data-submit]'); if (!f) return; e.preventDefault(); const fn = SUBMIT[f.dataset.submit]; if (fn) fn(f); });
+document.addEventListener('input', (e) => {
+  const k = e.target.dataset && e.target.dataset.input; if (!k) return;
+  V.p.q = e.target.value.trim(); const box = $('#list'); const fn = LISTS[V.name]; if (box && fn) box.innerHTML = fn();
+});
+document.addEventListener('change', (e) => { if (e.target.id === 'w-action') { captureW(); render(false); } });
+
+render(true);
+
+})();
+</script>
+
+<script>if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+</body>
+</html>
